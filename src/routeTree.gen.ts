@@ -13,10 +13,14 @@ import { Route as AppRouteImport } from './routes/_app'
 import { Route as AppIndexRouteImport } from './routes/_app/index'
 import { Route as AppDashboardRouteImport } from './routes/_app/dashboard'
 import { Route as AppCustomersIndexRouteImport } from './routes/_app/customers/index'
+import { Route as AppBillingIndexRouteImport } from './routes/_app/billing/index'
 import { Route as AppCustomersTicketsRouteImport } from './routes/_app/customers/tickets'
 import { Route as AppCustomersLifecycleRouteImport } from './routes/_app/customers/lifecycle'
 import { Route as AppCustomersComplaintsRouteImport } from './routes/_app/customers/complaints'
 import { Route as AppCustomersIdRouteImport } from './routes/_app/customers/$id'
+import { Route as AppBillingOverviewRouteImport } from './routes/_app/billing/overview'
+import { Route as AppBillingInvoicesIndexRouteImport } from './routes/_app/billing/invoices/index'
+import { Route as AppBillingInvoicesIdRouteImport } from './routes/_app/billing/invoices/$id'
 
 const AppRoute = AppRouteImport.update({
   id: '/_app',
@@ -35,6 +39,11 @@ const AppDashboardRoute = AppDashboardRouteImport.update({
 const AppCustomersIndexRoute = AppCustomersIndexRouteImport.update({
   id: '/customers/',
   path: '/customers/',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppBillingIndexRoute = AppBillingIndexRouteImport.update({
+  id: '/billing/',
+  path: '/billing/',
   getParentRoute: () => AppRoute,
 } as any)
 const AppCustomersTicketsRoute = AppCustomersTicketsRouteImport.update({
@@ -57,65 +66,104 @@ const AppCustomersIdRoute = AppCustomersIdRouteImport.update({
   path: '/customers/$id',
   getParentRoute: () => AppRoute,
 } as any)
+const AppBillingOverviewRoute = AppBillingOverviewRouteImport.update({
+  id: '/billing/overview',
+  path: '/billing/overview',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppBillingInvoicesIndexRoute = AppBillingInvoicesIndexRouteImport.update({
+  id: '/billing/invoices/',
+  path: '/billing/invoices/',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppBillingInvoicesIdRoute = AppBillingInvoicesIdRouteImport.update({
+  id: '/billing/invoices/$id',
+  path: '/billing/invoices/$id',
+  getParentRoute: () => AppRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof AppIndexRoute
   '/dashboard': typeof AppDashboardRoute
+  '/billing/overview': typeof AppBillingOverviewRoute
   '/customers/$id': typeof AppCustomersIdRoute
   '/customers/complaints': typeof AppCustomersComplaintsRoute
   '/customers/lifecycle': typeof AppCustomersLifecycleRoute
   '/customers/tickets': typeof AppCustomersTicketsRoute
+  '/billing/': typeof AppBillingIndexRoute
   '/customers/': typeof AppCustomersIndexRoute
+  '/billing/invoices/$id': typeof AppBillingInvoicesIdRoute
+  '/billing/invoices/': typeof AppBillingInvoicesIndexRoute
 }
 export interface FileRoutesByTo {
   '/dashboard': typeof AppDashboardRoute
   '/': typeof AppIndexRoute
+  '/billing/overview': typeof AppBillingOverviewRoute
   '/customers/$id': typeof AppCustomersIdRoute
   '/customers/complaints': typeof AppCustomersComplaintsRoute
   '/customers/lifecycle': typeof AppCustomersLifecycleRoute
   '/customers/tickets': typeof AppCustomersTicketsRoute
+  '/billing': typeof AppBillingIndexRoute
   '/customers': typeof AppCustomersIndexRoute
+  '/billing/invoices/$id': typeof AppBillingInvoicesIdRoute
+  '/billing/invoices': typeof AppBillingInvoicesIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/_app': typeof AppRouteWithChildren
   '/_app/dashboard': typeof AppDashboardRoute
   '/_app/': typeof AppIndexRoute
+  '/_app/billing/overview': typeof AppBillingOverviewRoute
   '/_app/customers/$id': typeof AppCustomersIdRoute
   '/_app/customers/complaints': typeof AppCustomersComplaintsRoute
   '/_app/customers/lifecycle': typeof AppCustomersLifecycleRoute
   '/_app/customers/tickets': typeof AppCustomersTicketsRoute
+  '/_app/billing/': typeof AppBillingIndexRoute
   '/_app/customers/': typeof AppCustomersIndexRoute
+  '/_app/billing/invoices/$id': typeof AppBillingInvoicesIdRoute
+  '/_app/billing/invoices/': typeof AppBillingInvoicesIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
     | '/dashboard'
+    | '/billing/overview'
     | '/customers/$id'
     | '/customers/complaints'
     | '/customers/lifecycle'
     | '/customers/tickets'
+    | '/billing/'
     | '/customers/'
+    | '/billing/invoices/$id'
+    | '/billing/invoices/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/dashboard'
     | '/'
+    | '/billing/overview'
     | '/customers/$id'
     | '/customers/complaints'
     | '/customers/lifecycle'
     | '/customers/tickets'
+    | '/billing'
     | '/customers'
+    | '/billing/invoices/$id'
+    | '/billing/invoices'
   id:
     | '__root__'
     | '/_app'
     | '/_app/dashboard'
     | '/_app/'
+    | '/_app/billing/overview'
     | '/_app/customers/$id'
     | '/_app/customers/complaints'
     | '/_app/customers/lifecycle'
     | '/_app/customers/tickets'
+    | '/_app/billing/'
     | '/_app/customers/'
+    | '/_app/billing/invoices/$id'
+    | '/_app/billing/invoices/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -152,6 +200,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppCustomersIndexRouteImport
       parentRoute: typeof AppRoute
     }
+    '/_app/billing/': {
+      id: '/_app/billing/'
+      path: '/billing'
+      fullPath: '/billing/'
+      preLoaderRoute: typeof AppBillingIndexRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/_app/customers/tickets': {
       id: '/_app/customers/tickets'
       path: '/customers/tickets'
@@ -180,27 +235,56 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppCustomersIdRouteImport
       parentRoute: typeof AppRoute
     }
+    '/_app/billing/overview': {
+      id: '/_app/billing/overview'
+      path: '/billing/overview'
+      fullPath: '/billing/overview'
+      preLoaderRoute: typeof AppBillingOverviewRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/billing/invoices/': {
+      id: '/_app/billing/invoices/'
+      path: '/billing/invoices'
+      fullPath: '/billing/invoices/'
+      preLoaderRoute: typeof AppBillingInvoicesIndexRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/billing/invoices/$id': {
+      id: '/_app/billing/invoices/$id'
+      path: '/billing/invoices/$id'
+      fullPath: '/billing/invoices/$id'
+      preLoaderRoute: typeof AppBillingInvoicesIdRouteImport
+      parentRoute: typeof AppRoute
+    }
   }
 }
 
 interface AppRouteChildren {
   AppDashboardRoute: typeof AppDashboardRoute
   AppIndexRoute: typeof AppIndexRoute
+  AppBillingOverviewRoute: typeof AppBillingOverviewRoute
   AppCustomersIdRoute: typeof AppCustomersIdRoute
   AppCustomersComplaintsRoute: typeof AppCustomersComplaintsRoute
   AppCustomersLifecycleRoute: typeof AppCustomersLifecycleRoute
   AppCustomersTicketsRoute: typeof AppCustomersTicketsRoute
+  AppBillingIndexRoute: typeof AppBillingIndexRoute
   AppCustomersIndexRoute: typeof AppCustomersIndexRoute
+  AppBillingInvoicesIdRoute: typeof AppBillingInvoicesIdRoute
+  AppBillingInvoicesIndexRoute: typeof AppBillingInvoicesIndexRoute
 }
 
 const AppRouteChildren: AppRouteChildren = {
   AppDashboardRoute: AppDashboardRoute,
   AppIndexRoute: AppIndexRoute,
+  AppBillingOverviewRoute: AppBillingOverviewRoute,
   AppCustomersIdRoute: AppCustomersIdRoute,
   AppCustomersComplaintsRoute: AppCustomersComplaintsRoute,
   AppCustomersLifecycleRoute: AppCustomersLifecycleRoute,
   AppCustomersTicketsRoute: AppCustomersTicketsRoute,
+  AppBillingIndexRoute: AppBillingIndexRoute,
   AppCustomersIndexRoute: AppCustomersIndexRoute,
+  AppBillingInvoicesIdRoute: AppBillingInvoicesIdRoute,
+  AppBillingInvoicesIndexRoute: AppBillingInvoicesIndexRoute,
 }
 
 const AppRouteWithChildren = AppRoute._addFileChildren(AppRouteChildren)
