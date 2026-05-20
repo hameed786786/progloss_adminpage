@@ -12,13 +12,39 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as AppRouteImport } from './routes/_app'
 import { Route as AppIndexRouteImport } from './routes/_app/index'
 import { Route as AppDashboardRouteImport } from './routes/_app/dashboard'
+import { Route as AppAuditRouteImport } from './routes/_app/audit'
+import { Route as AppAnalyticsRouteImport } from './routes/_app/analytics'
 import { Route as AppCustomersIndexRouteImport } from './routes/_app/customers/index'
 import { Route as AppBillingIndexRouteImport } from './routes/_app/billing/index'
+import { Route as AppSubscriptionsRenewalsRouteImport } from './routes/_app/subscriptions/renewals'
+import { Route as AppSubscriptionsPlansRouteImport } from './routes/_app/subscriptions/plans'
+import { Route as AppSubscriptionsCouponsRouteImport } from './routes/_app/subscriptions/coupons'
+import { Route as AppSubscriptionsActiveRouteImport } from './routes/_app/subscriptions/active'
+import { Route as AppStaffProductivityRouteImport } from './routes/_app/staff/productivity'
+import { Route as AppStaffPerformanceRouteImport } from './routes/_app/staff/performance'
+import { Route as AppStaffDirectoryRouteImport } from './routes/_app/staff/directory'
+import { Route as AppStaffAttendanceRouteImport } from './routes/_app/staff/attendance'
+import { Route as AppRbacRolesRouteImport } from './routes/_app/rbac/roles'
+import { Route as AppRbacPermissionsRouteImport } from './routes/_app/rbac/permissions'
+import { Route as AppPaymentsTransactionsRouteImport } from './routes/_app/payments/transactions'
+import { Route as AppPaymentsAutopayRouteImport } from './routes/_app/payments/autopay'
+import { Route as AppOperationsTrackingRouteImport } from './routes/_app/operations/tracking'
+import { Route as AppOperationsDispatchRouteImport } from './routes/_app/operations/dispatch'
+import { Route as AppOperationsDailyRouteImport } from './routes/_app/operations/daily'
 import { Route as AppCustomersTicketsRouteImport } from './routes/_app/customers/tickets'
 import { Route as AppCustomersLifecycleRouteImport } from './routes/_app/customers/lifecycle'
 import { Route as AppCustomersComplaintsRouteImport } from './routes/_app/customers/complaints'
 import { Route as AppCustomersIdRouteImport } from './routes/_app/customers/$id'
+import { Route as AppBillingVatRouteImport } from './routes/_app/billing/vat'
+import { Route as AppBillingRefundsRouteImport } from './routes/_app/billing/refunds'
 import { Route as AppBillingOverviewRouteImport } from './routes/_app/billing/overview'
+import { Route as AppBillingFailedRouteImport } from './routes/_app/billing/failed'
+import { Route as AppBillingExportsRouteImport } from './routes/_app/billing/exports'
+import { Route as AppBillingCreditRouteImport } from './routes/_app/billing/credit'
+import { Route as AppBillingAutoRouteImport } from './routes/_app/billing/auto'
+import { Route as AppApartmentsVehiclesRouteImport } from './routes/_app/apartments/vehicles'
+import { Route as AppApartmentsRevenueRouteImport } from './routes/_app/apartments/revenue'
+import { Route as AppApartmentsCommunitiesRouteImport } from './routes/_app/apartments/communities'
 import { Route as AppBillingInvoicesIndexRouteImport } from './routes/_app/billing/invoices/index'
 import { Route as AppBillingInvoicesIdRouteImport } from './routes/_app/billing/invoices/$id'
 
@@ -36,6 +62,16 @@ const AppDashboardRoute = AppDashboardRouteImport.update({
   path: '/dashboard',
   getParentRoute: () => AppRoute,
 } as any)
+const AppAuditRoute = AppAuditRouteImport.update({
+  id: '/audit',
+  path: '/audit',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppAnalyticsRoute = AppAnalyticsRouteImport.update({
+  id: '/analytics',
+  path: '/analytics',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppCustomersIndexRoute = AppCustomersIndexRouteImport.update({
   id: '/customers/',
   path: '/customers/',
@@ -44,6 +80,82 @@ const AppCustomersIndexRoute = AppCustomersIndexRouteImport.update({
 const AppBillingIndexRoute = AppBillingIndexRouteImport.update({
   id: '/billing/',
   path: '/billing/',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppSubscriptionsRenewalsRoute =
+  AppSubscriptionsRenewalsRouteImport.update({
+    id: '/subscriptions/renewals',
+    path: '/subscriptions/renewals',
+    getParentRoute: () => AppRoute,
+  } as any)
+const AppSubscriptionsPlansRoute = AppSubscriptionsPlansRouteImport.update({
+  id: '/subscriptions/plans',
+  path: '/subscriptions/plans',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppSubscriptionsCouponsRoute = AppSubscriptionsCouponsRouteImport.update({
+  id: '/subscriptions/coupons',
+  path: '/subscriptions/coupons',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppSubscriptionsActiveRoute = AppSubscriptionsActiveRouteImport.update({
+  id: '/subscriptions/active',
+  path: '/subscriptions/active',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppStaffProductivityRoute = AppStaffProductivityRouteImport.update({
+  id: '/staff/productivity',
+  path: '/staff/productivity',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppStaffPerformanceRoute = AppStaffPerformanceRouteImport.update({
+  id: '/staff/performance',
+  path: '/staff/performance',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppStaffDirectoryRoute = AppStaffDirectoryRouteImport.update({
+  id: '/staff/directory',
+  path: '/staff/directory',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppStaffAttendanceRoute = AppStaffAttendanceRouteImport.update({
+  id: '/staff/attendance',
+  path: '/staff/attendance',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppRbacRolesRoute = AppRbacRolesRouteImport.update({
+  id: '/rbac/roles',
+  path: '/rbac/roles',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppRbacPermissionsRoute = AppRbacPermissionsRouteImport.update({
+  id: '/rbac/permissions',
+  path: '/rbac/permissions',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppPaymentsTransactionsRoute = AppPaymentsTransactionsRouteImport.update({
+  id: '/payments/transactions',
+  path: '/payments/transactions',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppPaymentsAutopayRoute = AppPaymentsAutopayRouteImport.update({
+  id: '/payments/autopay',
+  path: '/payments/autopay',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppOperationsTrackingRoute = AppOperationsTrackingRouteImport.update({
+  id: '/operations/tracking',
+  path: '/operations/tracking',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppOperationsDispatchRoute = AppOperationsDispatchRouteImport.update({
+  id: '/operations/dispatch',
+  path: '/operations/dispatch',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppOperationsDailyRoute = AppOperationsDailyRouteImport.update({
+  id: '/operations/daily',
+  path: '/operations/daily',
   getParentRoute: () => AppRoute,
 } as any)
 const AppCustomersTicketsRoute = AppCustomersTicketsRouteImport.update({
@@ -66,11 +178,57 @@ const AppCustomersIdRoute = AppCustomersIdRouteImport.update({
   path: '/customers/$id',
   getParentRoute: () => AppRoute,
 } as any)
+const AppBillingVatRoute = AppBillingVatRouteImport.update({
+  id: '/billing/vat',
+  path: '/billing/vat',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppBillingRefundsRoute = AppBillingRefundsRouteImport.update({
+  id: '/billing/refunds',
+  path: '/billing/refunds',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppBillingOverviewRoute = AppBillingOverviewRouteImport.update({
   id: '/billing/overview',
   path: '/billing/overview',
   getParentRoute: () => AppRoute,
 } as any)
+const AppBillingFailedRoute = AppBillingFailedRouteImport.update({
+  id: '/billing/failed',
+  path: '/billing/failed',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppBillingExportsRoute = AppBillingExportsRouteImport.update({
+  id: '/billing/exports',
+  path: '/billing/exports',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppBillingCreditRoute = AppBillingCreditRouteImport.update({
+  id: '/billing/credit',
+  path: '/billing/credit',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppBillingAutoRoute = AppBillingAutoRouteImport.update({
+  id: '/billing/auto',
+  path: '/billing/auto',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppApartmentsVehiclesRoute = AppApartmentsVehiclesRouteImport.update({
+  id: '/apartments/vehicles',
+  path: '/apartments/vehicles',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppApartmentsRevenueRoute = AppApartmentsRevenueRouteImport.update({
+  id: '/apartments/revenue',
+  path: '/apartments/revenue',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppApartmentsCommunitiesRoute =
+  AppApartmentsCommunitiesRouteImport.update({
+    id: '/apartments/communities',
+    path: '/apartments/communities',
+    getParentRoute: () => AppRoute,
+  } as any)
 const AppBillingInvoicesIndexRoute = AppBillingInvoicesIndexRouteImport.update({
   id: '/billing/invoices/',
   path: '/billing/invoices/',
@@ -84,25 +242,77 @@ const AppBillingInvoicesIdRoute = AppBillingInvoicesIdRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof AppIndexRoute
+  '/analytics': typeof AppAnalyticsRoute
+  '/audit': typeof AppAuditRoute
   '/dashboard': typeof AppDashboardRoute
+  '/apartments/communities': typeof AppApartmentsCommunitiesRoute
+  '/apartments/revenue': typeof AppApartmentsRevenueRoute
+  '/apartments/vehicles': typeof AppApartmentsVehiclesRoute
+  '/billing/auto': typeof AppBillingAutoRoute
+  '/billing/credit': typeof AppBillingCreditRoute
+  '/billing/exports': typeof AppBillingExportsRoute
+  '/billing/failed': typeof AppBillingFailedRoute
   '/billing/overview': typeof AppBillingOverviewRoute
+  '/billing/refunds': typeof AppBillingRefundsRoute
+  '/billing/vat': typeof AppBillingVatRoute
   '/customers/$id': typeof AppCustomersIdRoute
   '/customers/complaints': typeof AppCustomersComplaintsRoute
   '/customers/lifecycle': typeof AppCustomersLifecycleRoute
   '/customers/tickets': typeof AppCustomersTicketsRoute
+  '/operations/daily': typeof AppOperationsDailyRoute
+  '/operations/dispatch': typeof AppOperationsDispatchRoute
+  '/operations/tracking': typeof AppOperationsTrackingRoute
+  '/payments/autopay': typeof AppPaymentsAutopayRoute
+  '/payments/transactions': typeof AppPaymentsTransactionsRoute
+  '/rbac/permissions': typeof AppRbacPermissionsRoute
+  '/rbac/roles': typeof AppRbacRolesRoute
+  '/staff/attendance': typeof AppStaffAttendanceRoute
+  '/staff/directory': typeof AppStaffDirectoryRoute
+  '/staff/performance': typeof AppStaffPerformanceRoute
+  '/staff/productivity': typeof AppStaffProductivityRoute
+  '/subscriptions/active': typeof AppSubscriptionsActiveRoute
+  '/subscriptions/coupons': typeof AppSubscriptionsCouponsRoute
+  '/subscriptions/plans': typeof AppSubscriptionsPlansRoute
+  '/subscriptions/renewals': typeof AppSubscriptionsRenewalsRoute
   '/billing/': typeof AppBillingIndexRoute
   '/customers/': typeof AppCustomersIndexRoute
   '/billing/invoices/$id': typeof AppBillingInvoicesIdRoute
   '/billing/invoices/': typeof AppBillingInvoicesIndexRoute
 }
 export interface FileRoutesByTo {
+  '/analytics': typeof AppAnalyticsRoute
+  '/audit': typeof AppAuditRoute
   '/dashboard': typeof AppDashboardRoute
   '/': typeof AppIndexRoute
+  '/apartments/communities': typeof AppApartmentsCommunitiesRoute
+  '/apartments/revenue': typeof AppApartmentsRevenueRoute
+  '/apartments/vehicles': typeof AppApartmentsVehiclesRoute
+  '/billing/auto': typeof AppBillingAutoRoute
+  '/billing/credit': typeof AppBillingCreditRoute
+  '/billing/exports': typeof AppBillingExportsRoute
+  '/billing/failed': typeof AppBillingFailedRoute
   '/billing/overview': typeof AppBillingOverviewRoute
+  '/billing/refunds': typeof AppBillingRefundsRoute
+  '/billing/vat': typeof AppBillingVatRoute
   '/customers/$id': typeof AppCustomersIdRoute
   '/customers/complaints': typeof AppCustomersComplaintsRoute
   '/customers/lifecycle': typeof AppCustomersLifecycleRoute
   '/customers/tickets': typeof AppCustomersTicketsRoute
+  '/operations/daily': typeof AppOperationsDailyRoute
+  '/operations/dispatch': typeof AppOperationsDispatchRoute
+  '/operations/tracking': typeof AppOperationsTrackingRoute
+  '/payments/autopay': typeof AppPaymentsAutopayRoute
+  '/payments/transactions': typeof AppPaymentsTransactionsRoute
+  '/rbac/permissions': typeof AppRbacPermissionsRoute
+  '/rbac/roles': typeof AppRbacRolesRoute
+  '/staff/attendance': typeof AppStaffAttendanceRoute
+  '/staff/directory': typeof AppStaffDirectoryRoute
+  '/staff/performance': typeof AppStaffPerformanceRoute
+  '/staff/productivity': typeof AppStaffProductivityRoute
+  '/subscriptions/active': typeof AppSubscriptionsActiveRoute
+  '/subscriptions/coupons': typeof AppSubscriptionsCouponsRoute
+  '/subscriptions/plans': typeof AppSubscriptionsPlansRoute
+  '/subscriptions/renewals': typeof AppSubscriptionsRenewalsRoute
   '/billing': typeof AppBillingIndexRoute
   '/customers': typeof AppCustomersIndexRoute
   '/billing/invoices/$id': typeof AppBillingInvoicesIdRoute
@@ -111,13 +321,39 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/_app': typeof AppRouteWithChildren
+  '/_app/analytics': typeof AppAnalyticsRoute
+  '/_app/audit': typeof AppAuditRoute
   '/_app/dashboard': typeof AppDashboardRoute
   '/_app/': typeof AppIndexRoute
+  '/_app/apartments/communities': typeof AppApartmentsCommunitiesRoute
+  '/_app/apartments/revenue': typeof AppApartmentsRevenueRoute
+  '/_app/apartments/vehicles': typeof AppApartmentsVehiclesRoute
+  '/_app/billing/auto': typeof AppBillingAutoRoute
+  '/_app/billing/credit': typeof AppBillingCreditRoute
+  '/_app/billing/exports': typeof AppBillingExportsRoute
+  '/_app/billing/failed': typeof AppBillingFailedRoute
   '/_app/billing/overview': typeof AppBillingOverviewRoute
+  '/_app/billing/refunds': typeof AppBillingRefundsRoute
+  '/_app/billing/vat': typeof AppBillingVatRoute
   '/_app/customers/$id': typeof AppCustomersIdRoute
   '/_app/customers/complaints': typeof AppCustomersComplaintsRoute
   '/_app/customers/lifecycle': typeof AppCustomersLifecycleRoute
   '/_app/customers/tickets': typeof AppCustomersTicketsRoute
+  '/_app/operations/daily': typeof AppOperationsDailyRoute
+  '/_app/operations/dispatch': typeof AppOperationsDispatchRoute
+  '/_app/operations/tracking': typeof AppOperationsTrackingRoute
+  '/_app/payments/autopay': typeof AppPaymentsAutopayRoute
+  '/_app/payments/transactions': typeof AppPaymentsTransactionsRoute
+  '/_app/rbac/permissions': typeof AppRbacPermissionsRoute
+  '/_app/rbac/roles': typeof AppRbacRolesRoute
+  '/_app/staff/attendance': typeof AppStaffAttendanceRoute
+  '/_app/staff/directory': typeof AppStaffDirectoryRoute
+  '/_app/staff/performance': typeof AppStaffPerformanceRoute
+  '/_app/staff/productivity': typeof AppStaffProductivityRoute
+  '/_app/subscriptions/active': typeof AppSubscriptionsActiveRoute
+  '/_app/subscriptions/coupons': typeof AppSubscriptionsCouponsRoute
+  '/_app/subscriptions/plans': typeof AppSubscriptionsPlansRoute
+  '/_app/subscriptions/renewals': typeof AppSubscriptionsRenewalsRoute
   '/_app/billing/': typeof AppBillingIndexRoute
   '/_app/customers/': typeof AppCustomersIndexRoute
   '/_app/billing/invoices/$id': typeof AppBillingInvoicesIdRoute
@@ -127,25 +363,77 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/analytics'
+    | '/audit'
     | '/dashboard'
+    | '/apartments/communities'
+    | '/apartments/revenue'
+    | '/apartments/vehicles'
+    | '/billing/auto'
+    | '/billing/credit'
+    | '/billing/exports'
+    | '/billing/failed'
     | '/billing/overview'
+    | '/billing/refunds'
+    | '/billing/vat'
     | '/customers/$id'
     | '/customers/complaints'
     | '/customers/lifecycle'
     | '/customers/tickets'
+    | '/operations/daily'
+    | '/operations/dispatch'
+    | '/operations/tracking'
+    | '/payments/autopay'
+    | '/payments/transactions'
+    | '/rbac/permissions'
+    | '/rbac/roles'
+    | '/staff/attendance'
+    | '/staff/directory'
+    | '/staff/performance'
+    | '/staff/productivity'
+    | '/subscriptions/active'
+    | '/subscriptions/coupons'
+    | '/subscriptions/plans'
+    | '/subscriptions/renewals'
     | '/billing/'
     | '/customers/'
     | '/billing/invoices/$id'
     | '/billing/invoices/'
   fileRoutesByTo: FileRoutesByTo
   to:
+    | '/analytics'
+    | '/audit'
     | '/dashboard'
     | '/'
+    | '/apartments/communities'
+    | '/apartments/revenue'
+    | '/apartments/vehicles'
+    | '/billing/auto'
+    | '/billing/credit'
+    | '/billing/exports'
+    | '/billing/failed'
     | '/billing/overview'
+    | '/billing/refunds'
+    | '/billing/vat'
     | '/customers/$id'
     | '/customers/complaints'
     | '/customers/lifecycle'
     | '/customers/tickets'
+    | '/operations/daily'
+    | '/operations/dispatch'
+    | '/operations/tracking'
+    | '/payments/autopay'
+    | '/payments/transactions'
+    | '/rbac/permissions'
+    | '/rbac/roles'
+    | '/staff/attendance'
+    | '/staff/directory'
+    | '/staff/performance'
+    | '/staff/productivity'
+    | '/subscriptions/active'
+    | '/subscriptions/coupons'
+    | '/subscriptions/plans'
+    | '/subscriptions/renewals'
     | '/billing'
     | '/customers'
     | '/billing/invoices/$id'
@@ -153,13 +441,39 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/_app'
+    | '/_app/analytics'
+    | '/_app/audit'
     | '/_app/dashboard'
     | '/_app/'
+    | '/_app/apartments/communities'
+    | '/_app/apartments/revenue'
+    | '/_app/apartments/vehicles'
+    | '/_app/billing/auto'
+    | '/_app/billing/credit'
+    | '/_app/billing/exports'
+    | '/_app/billing/failed'
     | '/_app/billing/overview'
+    | '/_app/billing/refunds'
+    | '/_app/billing/vat'
     | '/_app/customers/$id'
     | '/_app/customers/complaints'
     | '/_app/customers/lifecycle'
     | '/_app/customers/tickets'
+    | '/_app/operations/daily'
+    | '/_app/operations/dispatch'
+    | '/_app/operations/tracking'
+    | '/_app/payments/autopay'
+    | '/_app/payments/transactions'
+    | '/_app/rbac/permissions'
+    | '/_app/rbac/roles'
+    | '/_app/staff/attendance'
+    | '/_app/staff/directory'
+    | '/_app/staff/performance'
+    | '/_app/staff/productivity'
+    | '/_app/subscriptions/active'
+    | '/_app/subscriptions/coupons'
+    | '/_app/subscriptions/plans'
+    | '/_app/subscriptions/renewals'
     | '/_app/billing/'
     | '/_app/customers/'
     | '/_app/billing/invoices/$id'
@@ -193,6 +507,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppDashboardRouteImport
       parentRoute: typeof AppRoute
     }
+    '/_app/audit': {
+      id: '/_app/audit'
+      path: '/audit'
+      fullPath: '/audit'
+      preLoaderRoute: typeof AppAuditRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/analytics': {
+      id: '/_app/analytics'
+      path: '/analytics'
+      fullPath: '/analytics'
+      preLoaderRoute: typeof AppAnalyticsRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/_app/customers/': {
       id: '/_app/customers/'
       path: '/customers'
@@ -205,6 +533,111 @@ declare module '@tanstack/react-router' {
       path: '/billing'
       fullPath: '/billing/'
       preLoaderRoute: typeof AppBillingIndexRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/subscriptions/renewals': {
+      id: '/_app/subscriptions/renewals'
+      path: '/subscriptions/renewals'
+      fullPath: '/subscriptions/renewals'
+      preLoaderRoute: typeof AppSubscriptionsRenewalsRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/subscriptions/plans': {
+      id: '/_app/subscriptions/plans'
+      path: '/subscriptions/plans'
+      fullPath: '/subscriptions/plans'
+      preLoaderRoute: typeof AppSubscriptionsPlansRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/subscriptions/coupons': {
+      id: '/_app/subscriptions/coupons'
+      path: '/subscriptions/coupons'
+      fullPath: '/subscriptions/coupons'
+      preLoaderRoute: typeof AppSubscriptionsCouponsRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/subscriptions/active': {
+      id: '/_app/subscriptions/active'
+      path: '/subscriptions/active'
+      fullPath: '/subscriptions/active'
+      preLoaderRoute: typeof AppSubscriptionsActiveRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/staff/productivity': {
+      id: '/_app/staff/productivity'
+      path: '/staff/productivity'
+      fullPath: '/staff/productivity'
+      preLoaderRoute: typeof AppStaffProductivityRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/staff/performance': {
+      id: '/_app/staff/performance'
+      path: '/staff/performance'
+      fullPath: '/staff/performance'
+      preLoaderRoute: typeof AppStaffPerformanceRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/staff/directory': {
+      id: '/_app/staff/directory'
+      path: '/staff/directory'
+      fullPath: '/staff/directory'
+      preLoaderRoute: typeof AppStaffDirectoryRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/staff/attendance': {
+      id: '/_app/staff/attendance'
+      path: '/staff/attendance'
+      fullPath: '/staff/attendance'
+      preLoaderRoute: typeof AppStaffAttendanceRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/rbac/roles': {
+      id: '/_app/rbac/roles'
+      path: '/rbac/roles'
+      fullPath: '/rbac/roles'
+      preLoaderRoute: typeof AppRbacRolesRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/rbac/permissions': {
+      id: '/_app/rbac/permissions'
+      path: '/rbac/permissions'
+      fullPath: '/rbac/permissions'
+      preLoaderRoute: typeof AppRbacPermissionsRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/payments/transactions': {
+      id: '/_app/payments/transactions'
+      path: '/payments/transactions'
+      fullPath: '/payments/transactions'
+      preLoaderRoute: typeof AppPaymentsTransactionsRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/payments/autopay': {
+      id: '/_app/payments/autopay'
+      path: '/payments/autopay'
+      fullPath: '/payments/autopay'
+      preLoaderRoute: typeof AppPaymentsAutopayRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/operations/tracking': {
+      id: '/_app/operations/tracking'
+      path: '/operations/tracking'
+      fullPath: '/operations/tracking'
+      preLoaderRoute: typeof AppOperationsTrackingRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/operations/dispatch': {
+      id: '/_app/operations/dispatch'
+      path: '/operations/dispatch'
+      fullPath: '/operations/dispatch'
+      preLoaderRoute: typeof AppOperationsDispatchRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/operations/daily': {
+      id: '/_app/operations/daily'
+      path: '/operations/daily'
+      fullPath: '/operations/daily'
+      preLoaderRoute: typeof AppOperationsDailyRouteImport
       parentRoute: typeof AppRoute
     }
     '/_app/customers/tickets': {
@@ -235,11 +668,74 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppCustomersIdRouteImport
       parentRoute: typeof AppRoute
     }
+    '/_app/billing/vat': {
+      id: '/_app/billing/vat'
+      path: '/billing/vat'
+      fullPath: '/billing/vat'
+      preLoaderRoute: typeof AppBillingVatRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/billing/refunds': {
+      id: '/_app/billing/refunds'
+      path: '/billing/refunds'
+      fullPath: '/billing/refunds'
+      preLoaderRoute: typeof AppBillingRefundsRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/_app/billing/overview': {
       id: '/_app/billing/overview'
       path: '/billing/overview'
       fullPath: '/billing/overview'
       preLoaderRoute: typeof AppBillingOverviewRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/billing/failed': {
+      id: '/_app/billing/failed'
+      path: '/billing/failed'
+      fullPath: '/billing/failed'
+      preLoaderRoute: typeof AppBillingFailedRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/billing/exports': {
+      id: '/_app/billing/exports'
+      path: '/billing/exports'
+      fullPath: '/billing/exports'
+      preLoaderRoute: typeof AppBillingExportsRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/billing/credit': {
+      id: '/_app/billing/credit'
+      path: '/billing/credit'
+      fullPath: '/billing/credit'
+      preLoaderRoute: typeof AppBillingCreditRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/billing/auto': {
+      id: '/_app/billing/auto'
+      path: '/billing/auto'
+      fullPath: '/billing/auto'
+      preLoaderRoute: typeof AppBillingAutoRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/apartments/vehicles': {
+      id: '/_app/apartments/vehicles'
+      path: '/apartments/vehicles'
+      fullPath: '/apartments/vehicles'
+      preLoaderRoute: typeof AppApartmentsVehiclesRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/apartments/revenue': {
+      id: '/_app/apartments/revenue'
+      path: '/apartments/revenue'
+      fullPath: '/apartments/revenue'
+      preLoaderRoute: typeof AppApartmentsRevenueRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/apartments/communities': {
+      id: '/_app/apartments/communities'
+      path: '/apartments/communities'
+      fullPath: '/apartments/communities'
+      preLoaderRoute: typeof AppApartmentsCommunitiesRouteImport
       parentRoute: typeof AppRoute
     }
     '/_app/billing/invoices/': {
@@ -260,13 +756,39 @@ declare module '@tanstack/react-router' {
 }
 
 interface AppRouteChildren {
+  AppAnalyticsRoute: typeof AppAnalyticsRoute
+  AppAuditRoute: typeof AppAuditRoute
   AppDashboardRoute: typeof AppDashboardRoute
   AppIndexRoute: typeof AppIndexRoute
+  AppApartmentsCommunitiesRoute: typeof AppApartmentsCommunitiesRoute
+  AppApartmentsRevenueRoute: typeof AppApartmentsRevenueRoute
+  AppApartmentsVehiclesRoute: typeof AppApartmentsVehiclesRoute
+  AppBillingAutoRoute: typeof AppBillingAutoRoute
+  AppBillingCreditRoute: typeof AppBillingCreditRoute
+  AppBillingExportsRoute: typeof AppBillingExportsRoute
+  AppBillingFailedRoute: typeof AppBillingFailedRoute
   AppBillingOverviewRoute: typeof AppBillingOverviewRoute
+  AppBillingRefundsRoute: typeof AppBillingRefundsRoute
+  AppBillingVatRoute: typeof AppBillingVatRoute
   AppCustomersIdRoute: typeof AppCustomersIdRoute
   AppCustomersComplaintsRoute: typeof AppCustomersComplaintsRoute
   AppCustomersLifecycleRoute: typeof AppCustomersLifecycleRoute
   AppCustomersTicketsRoute: typeof AppCustomersTicketsRoute
+  AppOperationsDailyRoute: typeof AppOperationsDailyRoute
+  AppOperationsDispatchRoute: typeof AppOperationsDispatchRoute
+  AppOperationsTrackingRoute: typeof AppOperationsTrackingRoute
+  AppPaymentsAutopayRoute: typeof AppPaymentsAutopayRoute
+  AppPaymentsTransactionsRoute: typeof AppPaymentsTransactionsRoute
+  AppRbacPermissionsRoute: typeof AppRbacPermissionsRoute
+  AppRbacRolesRoute: typeof AppRbacRolesRoute
+  AppStaffAttendanceRoute: typeof AppStaffAttendanceRoute
+  AppStaffDirectoryRoute: typeof AppStaffDirectoryRoute
+  AppStaffPerformanceRoute: typeof AppStaffPerformanceRoute
+  AppStaffProductivityRoute: typeof AppStaffProductivityRoute
+  AppSubscriptionsActiveRoute: typeof AppSubscriptionsActiveRoute
+  AppSubscriptionsCouponsRoute: typeof AppSubscriptionsCouponsRoute
+  AppSubscriptionsPlansRoute: typeof AppSubscriptionsPlansRoute
+  AppSubscriptionsRenewalsRoute: typeof AppSubscriptionsRenewalsRoute
   AppBillingIndexRoute: typeof AppBillingIndexRoute
   AppCustomersIndexRoute: typeof AppCustomersIndexRoute
   AppBillingInvoicesIdRoute: typeof AppBillingInvoicesIdRoute
@@ -274,13 +796,39 @@ interface AppRouteChildren {
 }
 
 const AppRouteChildren: AppRouteChildren = {
+  AppAnalyticsRoute: AppAnalyticsRoute,
+  AppAuditRoute: AppAuditRoute,
   AppDashboardRoute: AppDashboardRoute,
   AppIndexRoute: AppIndexRoute,
+  AppApartmentsCommunitiesRoute: AppApartmentsCommunitiesRoute,
+  AppApartmentsRevenueRoute: AppApartmentsRevenueRoute,
+  AppApartmentsVehiclesRoute: AppApartmentsVehiclesRoute,
+  AppBillingAutoRoute: AppBillingAutoRoute,
+  AppBillingCreditRoute: AppBillingCreditRoute,
+  AppBillingExportsRoute: AppBillingExportsRoute,
+  AppBillingFailedRoute: AppBillingFailedRoute,
   AppBillingOverviewRoute: AppBillingOverviewRoute,
+  AppBillingRefundsRoute: AppBillingRefundsRoute,
+  AppBillingVatRoute: AppBillingVatRoute,
   AppCustomersIdRoute: AppCustomersIdRoute,
   AppCustomersComplaintsRoute: AppCustomersComplaintsRoute,
   AppCustomersLifecycleRoute: AppCustomersLifecycleRoute,
   AppCustomersTicketsRoute: AppCustomersTicketsRoute,
+  AppOperationsDailyRoute: AppOperationsDailyRoute,
+  AppOperationsDispatchRoute: AppOperationsDispatchRoute,
+  AppOperationsTrackingRoute: AppOperationsTrackingRoute,
+  AppPaymentsAutopayRoute: AppPaymentsAutopayRoute,
+  AppPaymentsTransactionsRoute: AppPaymentsTransactionsRoute,
+  AppRbacPermissionsRoute: AppRbacPermissionsRoute,
+  AppRbacRolesRoute: AppRbacRolesRoute,
+  AppStaffAttendanceRoute: AppStaffAttendanceRoute,
+  AppStaffDirectoryRoute: AppStaffDirectoryRoute,
+  AppStaffPerformanceRoute: AppStaffPerformanceRoute,
+  AppStaffProductivityRoute: AppStaffProductivityRoute,
+  AppSubscriptionsActiveRoute: AppSubscriptionsActiveRoute,
+  AppSubscriptionsCouponsRoute: AppSubscriptionsCouponsRoute,
+  AppSubscriptionsPlansRoute: AppSubscriptionsPlansRoute,
+  AppSubscriptionsRenewalsRoute: AppSubscriptionsRenewalsRoute,
   AppBillingIndexRoute: AppBillingIndexRoute,
   AppCustomersIndexRoute: AppCustomersIndexRoute,
   AppBillingInvoicesIdRoute: AppBillingInvoicesIdRoute,
