@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as AppRouteImport } from './routes/_app'
 import { Route as AppIndexRouteImport } from './routes/_app/index'
+import { Route as AppSettingsRouteImport } from './routes/_app/settings'
 import { Route as AppDashboardRouteImport } from './routes/_app/dashboard'
 import { Route as AppAuditRouteImport } from './routes/_app/audit'
 import { Route as AppAnalyticsRouteImport } from './routes/_app/analytics'
@@ -27,10 +28,18 @@ import { Route as AppStaffAttendanceRouteImport } from './routes/_app/staff/atte
 import { Route as AppRbacRolesRouteImport } from './routes/_app/rbac/roles'
 import { Route as AppRbacPermissionsRouteImport } from './routes/_app/rbac/permissions'
 import { Route as AppPaymentsTransactionsRouteImport } from './routes/_app/payments/transactions'
+import { Route as AppPaymentsGatewayRouteImport } from './routes/_app/payments/gateway'
 import { Route as AppPaymentsAutopayRouteImport } from './routes/_app/payments/autopay'
 import { Route as AppOperationsTrackingRouteImport } from './routes/_app/operations/tracking'
 import { Route as AppOperationsDispatchRouteImport } from './routes/_app/operations/dispatch'
 import { Route as AppOperationsDailyRouteImport } from './routes/_app/operations/daily'
+import { Route as AppNotificationsSmsRouteImport } from './routes/_app/notifications/sms'
+import { Route as AppNotificationsPushRouteImport } from './routes/_app/notifications/push'
+import { Route as AppNotificationsEmailRouteImport } from './routes/_app/notifications/email'
+import { Route as AppEcommercePromotionsRouteImport } from './routes/_app/ecommerce/promotions'
+import { Route as AppEcommerceProductsRouteImport } from './routes/_app/ecommerce/products'
+import { Route as AppEcommerceOrdersRouteImport } from './routes/_app/ecommerce/orders'
+import { Route as AppEcommerceCouponsRouteImport } from './routes/_app/ecommerce/coupons'
 import { Route as AppCustomersTicketsRouteImport } from './routes/_app/customers/tickets'
 import { Route as AppCustomersLifecycleRouteImport } from './routes/_app/customers/lifecycle'
 import { Route as AppCustomersComplaintsRouteImport } from './routes/_app/customers/complaints'
@@ -55,6 +64,11 @@ const AppRoute = AppRouteImport.update({
 const AppIndexRoute = AppIndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppSettingsRoute = AppSettingsRouteImport.update({
+  id: '/settings',
+  path: '/settings',
   getParentRoute: () => AppRoute,
 } as any)
 const AppDashboardRoute = AppDashboardRouteImport.update({
@@ -138,6 +152,11 @@ const AppPaymentsTransactionsRoute = AppPaymentsTransactionsRouteImport.update({
   path: '/payments/transactions',
   getParentRoute: () => AppRoute,
 } as any)
+const AppPaymentsGatewayRoute = AppPaymentsGatewayRouteImport.update({
+  id: '/payments/gateway',
+  path: '/payments/gateway',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppPaymentsAutopayRoute = AppPaymentsAutopayRouteImport.update({
   id: '/payments/autopay',
   path: '/payments/autopay',
@@ -156,6 +175,41 @@ const AppOperationsDispatchRoute = AppOperationsDispatchRouteImport.update({
 const AppOperationsDailyRoute = AppOperationsDailyRouteImport.update({
   id: '/operations/daily',
   path: '/operations/daily',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppNotificationsSmsRoute = AppNotificationsSmsRouteImport.update({
+  id: '/notifications/sms',
+  path: '/notifications/sms',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppNotificationsPushRoute = AppNotificationsPushRouteImport.update({
+  id: '/notifications/push',
+  path: '/notifications/push',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppNotificationsEmailRoute = AppNotificationsEmailRouteImport.update({
+  id: '/notifications/email',
+  path: '/notifications/email',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppEcommercePromotionsRoute = AppEcommercePromotionsRouteImport.update({
+  id: '/ecommerce/promotions',
+  path: '/ecommerce/promotions',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppEcommerceProductsRoute = AppEcommerceProductsRouteImport.update({
+  id: '/ecommerce/products',
+  path: '/ecommerce/products',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppEcommerceOrdersRoute = AppEcommerceOrdersRouteImport.update({
+  id: '/ecommerce/orders',
+  path: '/ecommerce/orders',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppEcommerceCouponsRoute = AppEcommerceCouponsRouteImport.update({
+  id: '/ecommerce/coupons',
+  path: '/ecommerce/coupons',
   getParentRoute: () => AppRoute,
 } as any)
 const AppCustomersTicketsRoute = AppCustomersTicketsRouteImport.update({
@@ -245,6 +299,7 @@ export interface FileRoutesByFullPath {
   '/analytics': typeof AppAnalyticsRoute
   '/audit': typeof AppAuditRoute
   '/dashboard': typeof AppDashboardRoute
+  '/settings': typeof AppSettingsRoute
   '/apartments/communities': typeof AppApartmentsCommunitiesRoute
   '/apartments/revenue': typeof AppApartmentsRevenueRoute
   '/apartments/vehicles': typeof AppApartmentsVehiclesRoute
@@ -259,10 +314,18 @@ export interface FileRoutesByFullPath {
   '/customers/complaints': typeof AppCustomersComplaintsRoute
   '/customers/lifecycle': typeof AppCustomersLifecycleRoute
   '/customers/tickets': typeof AppCustomersTicketsRoute
+  '/ecommerce/coupons': typeof AppEcommerceCouponsRoute
+  '/ecommerce/orders': typeof AppEcommerceOrdersRoute
+  '/ecommerce/products': typeof AppEcommerceProductsRoute
+  '/ecommerce/promotions': typeof AppEcommercePromotionsRoute
+  '/notifications/email': typeof AppNotificationsEmailRoute
+  '/notifications/push': typeof AppNotificationsPushRoute
+  '/notifications/sms': typeof AppNotificationsSmsRoute
   '/operations/daily': typeof AppOperationsDailyRoute
   '/operations/dispatch': typeof AppOperationsDispatchRoute
   '/operations/tracking': typeof AppOperationsTrackingRoute
   '/payments/autopay': typeof AppPaymentsAutopayRoute
+  '/payments/gateway': typeof AppPaymentsGatewayRoute
   '/payments/transactions': typeof AppPaymentsTransactionsRoute
   '/rbac/permissions': typeof AppRbacPermissionsRoute
   '/rbac/roles': typeof AppRbacRolesRoute
@@ -283,6 +346,7 @@ export interface FileRoutesByTo {
   '/analytics': typeof AppAnalyticsRoute
   '/audit': typeof AppAuditRoute
   '/dashboard': typeof AppDashboardRoute
+  '/settings': typeof AppSettingsRoute
   '/': typeof AppIndexRoute
   '/apartments/communities': typeof AppApartmentsCommunitiesRoute
   '/apartments/revenue': typeof AppApartmentsRevenueRoute
@@ -298,10 +362,18 @@ export interface FileRoutesByTo {
   '/customers/complaints': typeof AppCustomersComplaintsRoute
   '/customers/lifecycle': typeof AppCustomersLifecycleRoute
   '/customers/tickets': typeof AppCustomersTicketsRoute
+  '/ecommerce/coupons': typeof AppEcommerceCouponsRoute
+  '/ecommerce/orders': typeof AppEcommerceOrdersRoute
+  '/ecommerce/products': typeof AppEcommerceProductsRoute
+  '/ecommerce/promotions': typeof AppEcommercePromotionsRoute
+  '/notifications/email': typeof AppNotificationsEmailRoute
+  '/notifications/push': typeof AppNotificationsPushRoute
+  '/notifications/sms': typeof AppNotificationsSmsRoute
   '/operations/daily': typeof AppOperationsDailyRoute
   '/operations/dispatch': typeof AppOperationsDispatchRoute
   '/operations/tracking': typeof AppOperationsTrackingRoute
   '/payments/autopay': typeof AppPaymentsAutopayRoute
+  '/payments/gateway': typeof AppPaymentsGatewayRoute
   '/payments/transactions': typeof AppPaymentsTransactionsRoute
   '/rbac/permissions': typeof AppRbacPermissionsRoute
   '/rbac/roles': typeof AppRbacRolesRoute
@@ -324,6 +396,7 @@ export interface FileRoutesById {
   '/_app/analytics': typeof AppAnalyticsRoute
   '/_app/audit': typeof AppAuditRoute
   '/_app/dashboard': typeof AppDashboardRoute
+  '/_app/settings': typeof AppSettingsRoute
   '/_app/': typeof AppIndexRoute
   '/_app/apartments/communities': typeof AppApartmentsCommunitiesRoute
   '/_app/apartments/revenue': typeof AppApartmentsRevenueRoute
@@ -339,10 +412,18 @@ export interface FileRoutesById {
   '/_app/customers/complaints': typeof AppCustomersComplaintsRoute
   '/_app/customers/lifecycle': typeof AppCustomersLifecycleRoute
   '/_app/customers/tickets': typeof AppCustomersTicketsRoute
+  '/_app/ecommerce/coupons': typeof AppEcommerceCouponsRoute
+  '/_app/ecommerce/orders': typeof AppEcommerceOrdersRoute
+  '/_app/ecommerce/products': typeof AppEcommerceProductsRoute
+  '/_app/ecommerce/promotions': typeof AppEcommercePromotionsRoute
+  '/_app/notifications/email': typeof AppNotificationsEmailRoute
+  '/_app/notifications/push': typeof AppNotificationsPushRoute
+  '/_app/notifications/sms': typeof AppNotificationsSmsRoute
   '/_app/operations/daily': typeof AppOperationsDailyRoute
   '/_app/operations/dispatch': typeof AppOperationsDispatchRoute
   '/_app/operations/tracking': typeof AppOperationsTrackingRoute
   '/_app/payments/autopay': typeof AppPaymentsAutopayRoute
+  '/_app/payments/gateway': typeof AppPaymentsGatewayRoute
   '/_app/payments/transactions': typeof AppPaymentsTransactionsRoute
   '/_app/rbac/permissions': typeof AppRbacPermissionsRoute
   '/_app/rbac/roles': typeof AppRbacRolesRoute
@@ -366,6 +447,7 @@ export interface FileRouteTypes {
     | '/analytics'
     | '/audit'
     | '/dashboard'
+    | '/settings'
     | '/apartments/communities'
     | '/apartments/revenue'
     | '/apartments/vehicles'
@@ -380,10 +462,18 @@ export interface FileRouteTypes {
     | '/customers/complaints'
     | '/customers/lifecycle'
     | '/customers/tickets'
+    | '/ecommerce/coupons'
+    | '/ecommerce/orders'
+    | '/ecommerce/products'
+    | '/ecommerce/promotions'
+    | '/notifications/email'
+    | '/notifications/push'
+    | '/notifications/sms'
     | '/operations/daily'
     | '/operations/dispatch'
     | '/operations/tracking'
     | '/payments/autopay'
+    | '/payments/gateway'
     | '/payments/transactions'
     | '/rbac/permissions'
     | '/rbac/roles'
@@ -404,6 +494,7 @@ export interface FileRouteTypes {
     | '/analytics'
     | '/audit'
     | '/dashboard'
+    | '/settings'
     | '/'
     | '/apartments/communities'
     | '/apartments/revenue'
@@ -419,10 +510,18 @@ export interface FileRouteTypes {
     | '/customers/complaints'
     | '/customers/lifecycle'
     | '/customers/tickets'
+    | '/ecommerce/coupons'
+    | '/ecommerce/orders'
+    | '/ecommerce/products'
+    | '/ecommerce/promotions'
+    | '/notifications/email'
+    | '/notifications/push'
+    | '/notifications/sms'
     | '/operations/daily'
     | '/operations/dispatch'
     | '/operations/tracking'
     | '/payments/autopay'
+    | '/payments/gateway'
     | '/payments/transactions'
     | '/rbac/permissions'
     | '/rbac/roles'
@@ -444,6 +543,7 @@ export interface FileRouteTypes {
     | '/_app/analytics'
     | '/_app/audit'
     | '/_app/dashboard'
+    | '/_app/settings'
     | '/_app/'
     | '/_app/apartments/communities'
     | '/_app/apartments/revenue'
@@ -459,10 +559,18 @@ export interface FileRouteTypes {
     | '/_app/customers/complaints'
     | '/_app/customers/lifecycle'
     | '/_app/customers/tickets'
+    | '/_app/ecommerce/coupons'
+    | '/_app/ecommerce/orders'
+    | '/_app/ecommerce/products'
+    | '/_app/ecommerce/promotions'
+    | '/_app/notifications/email'
+    | '/_app/notifications/push'
+    | '/_app/notifications/sms'
     | '/_app/operations/daily'
     | '/_app/operations/dispatch'
     | '/_app/operations/tracking'
     | '/_app/payments/autopay'
+    | '/_app/payments/gateway'
     | '/_app/payments/transactions'
     | '/_app/rbac/permissions'
     | '/_app/rbac/roles'
@@ -498,6 +606,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof AppIndexRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/settings': {
+      id: '/_app/settings'
+      path: '/settings'
+      fullPath: '/settings'
+      preLoaderRoute: typeof AppSettingsRouteImport
       parentRoute: typeof AppRoute
     }
     '/_app/dashboard': {
@@ -612,6 +727,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppPaymentsTransactionsRouteImport
       parentRoute: typeof AppRoute
     }
+    '/_app/payments/gateway': {
+      id: '/_app/payments/gateway'
+      path: '/payments/gateway'
+      fullPath: '/payments/gateway'
+      preLoaderRoute: typeof AppPaymentsGatewayRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/_app/payments/autopay': {
       id: '/_app/payments/autopay'
       path: '/payments/autopay'
@@ -638,6 +760,55 @@ declare module '@tanstack/react-router' {
       path: '/operations/daily'
       fullPath: '/operations/daily'
       preLoaderRoute: typeof AppOperationsDailyRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/notifications/sms': {
+      id: '/_app/notifications/sms'
+      path: '/notifications/sms'
+      fullPath: '/notifications/sms'
+      preLoaderRoute: typeof AppNotificationsSmsRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/notifications/push': {
+      id: '/_app/notifications/push'
+      path: '/notifications/push'
+      fullPath: '/notifications/push'
+      preLoaderRoute: typeof AppNotificationsPushRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/notifications/email': {
+      id: '/_app/notifications/email'
+      path: '/notifications/email'
+      fullPath: '/notifications/email'
+      preLoaderRoute: typeof AppNotificationsEmailRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/ecommerce/promotions': {
+      id: '/_app/ecommerce/promotions'
+      path: '/ecommerce/promotions'
+      fullPath: '/ecommerce/promotions'
+      preLoaderRoute: typeof AppEcommercePromotionsRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/ecommerce/products': {
+      id: '/_app/ecommerce/products'
+      path: '/ecommerce/products'
+      fullPath: '/ecommerce/products'
+      preLoaderRoute: typeof AppEcommerceProductsRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/ecommerce/orders': {
+      id: '/_app/ecommerce/orders'
+      path: '/ecommerce/orders'
+      fullPath: '/ecommerce/orders'
+      preLoaderRoute: typeof AppEcommerceOrdersRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/ecommerce/coupons': {
+      id: '/_app/ecommerce/coupons'
+      path: '/ecommerce/coupons'
+      fullPath: '/ecommerce/coupons'
+      preLoaderRoute: typeof AppEcommerceCouponsRouteImport
       parentRoute: typeof AppRoute
     }
     '/_app/customers/tickets': {
@@ -759,6 +930,7 @@ interface AppRouteChildren {
   AppAnalyticsRoute: typeof AppAnalyticsRoute
   AppAuditRoute: typeof AppAuditRoute
   AppDashboardRoute: typeof AppDashboardRoute
+  AppSettingsRoute: typeof AppSettingsRoute
   AppIndexRoute: typeof AppIndexRoute
   AppApartmentsCommunitiesRoute: typeof AppApartmentsCommunitiesRoute
   AppApartmentsRevenueRoute: typeof AppApartmentsRevenueRoute
@@ -774,10 +946,18 @@ interface AppRouteChildren {
   AppCustomersComplaintsRoute: typeof AppCustomersComplaintsRoute
   AppCustomersLifecycleRoute: typeof AppCustomersLifecycleRoute
   AppCustomersTicketsRoute: typeof AppCustomersTicketsRoute
+  AppEcommerceCouponsRoute: typeof AppEcommerceCouponsRoute
+  AppEcommerceOrdersRoute: typeof AppEcommerceOrdersRoute
+  AppEcommerceProductsRoute: typeof AppEcommerceProductsRoute
+  AppEcommercePromotionsRoute: typeof AppEcommercePromotionsRoute
+  AppNotificationsEmailRoute: typeof AppNotificationsEmailRoute
+  AppNotificationsPushRoute: typeof AppNotificationsPushRoute
+  AppNotificationsSmsRoute: typeof AppNotificationsSmsRoute
   AppOperationsDailyRoute: typeof AppOperationsDailyRoute
   AppOperationsDispatchRoute: typeof AppOperationsDispatchRoute
   AppOperationsTrackingRoute: typeof AppOperationsTrackingRoute
   AppPaymentsAutopayRoute: typeof AppPaymentsAutopayRoute
+  AppPaymentsGatewayRoute: typeof AppPaymentsGatewayRoute
   AppPaymentsTransactionsRoute: typeof AppPaymentsTransactionsRoute
   AppRbacPermissionsRoute: typeof AppRbacPermissionsRoute
   AppRbacRolesRoute: typeof AppRbacRolesRoute
@@ -799,6 +979,7 @@ const AppRouteChildren: AppRouteChildren = {
   AppAnalyticsRoute: AppAnalyticsRoute,
   AppAuditRoute: AppAuditRoute,
   AppDashboardRoute: AppDashboardRoute,
+  AppSettingsRoute: AppSettingsRoute,
   AppIndexRoute: AppIndexRoute,
   AppApartmentsCommunitiesRoute: AppApartmentsCommunitiesRoute,
   AppApartmentsRevenueRoute: AppApartmentsRevenueRoute,
@@ -814,10 +995,18 @@ const AppRouteChildren: AppRouteChildren = {
   AppCustomersComplaintsRoute: AppCustomersComplaintsRoute,
   AppCustomersLifecycleRoute: AppCustomersLifecycleRoute,
   AppCustomersTicketsRoute: AppCustomersTicketsRoute,
+  AppEcommerceCouponsRoute: AppEcommerceCouponsRoute,
+  AppEcommerceOrdersRoute: AppEcommerceOrdersRoute,
+  AppEcommerceProductsRoute: AppEcommerceProductsRoute,
+  AppEcommercePromotionsRoute: AppEcommercePromotionsRoute,
+  AppNotificationsEmailRoute: AppNotificationsEmailRoute,
+  AppNotificationsPushRoute: AppNotificationsPushRoute,
+  AppNotificationsSmsRoute: AppNotificationsSmsRoute,
   AppOperationsDailyRoute: AppOperationsDailyRoute,
   AppOperationsDispatchRoute: AppOperationsDispatchRoute,
   AppOperationsTrackingRoute: AppOperationsTrackingRoute,
   AppPaymentsAutopayRoute: AppPaymentsAutopayRoute,
+  AppPaymentsGatewayRoute: AppPaymentsGatewayRoute,
   AppPaymentsTransactionsRoute: AppPaymentsTransactionsRoute,
   AppRbacPermissionsRoute: AppRbacPermissionsRoute,
   AppRbacRolesRoute: AppRbacRolesRoute,
