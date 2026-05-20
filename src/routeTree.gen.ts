@@ -12,6 +12,11 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as AppRouteImport } from './routes/_app'
 import { Route as AppIndexRouteImport } from './routes/_app/index'
 import { Route as AppDashboardRouteImport } from './routes/_app/dashboard'
+import { Route as AppCustomersIndexRouteImport } from './routes/_app/customers/index'
+import { Route as AppCustomersTicketsRouteImport } from './routes/_app/customers/tickets'
+import { Route as AppCustomersLifecycleRouteImport } from './routes/_app/customers/lifecycle'
+import { Route as AppCustomersComplaintsRouteImport } from './routes/_app/customers/complaints'
+import { Route as AppCustomersIdRouteImport } from './routes/_app/customers/$id'
 
 const AppRoute = AppRouteImport.update({
   id: '/_app',
@@ -27,27 +32,90 @@ const AppDashboardRoute = AppDashboardRouteImport.update({
   path: '/dashboard',
   getParentRoute: () => AppRoute,
 } as any)
+const AppCustomersIndexRoute = AppCustomersIndexRouteImport.update({
+  id: '/customers/',
+  path: '/customers/',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppCustomersTicketsRoute = AppCustomersTicketsRouteImport.update({
+  id: '/customers/tickets',
+  path: '/customers/tickets',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppCustomersLifecycleRoute = AppCustomersLifecycleRouteImport.update({
+  id: '/customers/lifecycle',
+  path: '/customers/lifecycle',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppCustomersComplaintsRoute = AppCustomersComplaintsRouteImport.update({
+  id: '/customers/complaints',
+  path: '/customers/complaints',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppCustomersIdRoute = AppCustomersIdRouteImport.update({
+  id: '/customers/$id',
+  path: '/customers/$id',
+  getParentRoute: () => AppRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof AppIndexRoute
   '/dashboard': typeof AppDashboardRoute
+  '/customers/$id': typeof AppCustomersIdRoute
+  '/customers/complaints': typeof AppCustomersComplaintsRoute
+  '/customers/lifecycle': typeof AppCustomersLifecycleRoute
+  '/customers/tickets': typeof AppCustomersTicketsRoute
+  '/customers/': typeof AppCustomersIndexRoute
 }
 export interface FileRoutesByTo {
   '/dashboard': typeof AppDashboardRoute
   '/': typeof AppIndexRoute
+  '/customers/$id': typeof AppCustomersIdRoute
+  '/customers/complaints': typeof AppCustomersComplaintsRoute
+  '/customers/lifecycle': typeof AppCustomersLifecycleRoute
+  '/customers/tickets': typeof AppCustomersTicketsRoute
+  '/customers': typeof AppCustomersIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/_app': typeof AppRouteWithChildren
   '/_app/dashboard': typeof AppDashboardRoute
   '/_app/': typeof AppIndexRoute
+  '/_app/customers/$id': typeof AppCustomersIdRoute
+  '/_app/customers/complaints': typeof AppCustomersComplaintsRoute
+  '/_app/customers/lifecycle': typeof AppCustomersLifecycleRoute
+  '/_app/customers/tickets': typeof AppCustomersTicketsRoute
+  '/_app/customers/': typeof AppCustomersIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/dashboard'
+  fullPaths:
+    | '/'
+    | '/dashboard'
+    | '/customers/$id'
+    | '/customers/complaints'
+    | '/customers/lifecycle'
+    | '/customers/tickets'
+    | '/customers/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/dashboard' | '/'
-  id: '__root__' | '/_app' | '/_app/dashboard' | '/_app/'
+  to:
+    | '/dashboard'
+    | '/'
+    | '/customers/$id'
+    | '/customers/complaints'
+    | '/customers/lifecycle'
+    | '/customers/tickets'
+    | '/customers'
+  id:
+    | '__root__'
+    | '/_app'
+    | '/_app/dashboard'
+    | '/_app/'
+    | '/_app/customers/$id'
+    | '/_app/customers/complaints'
+    | '/_app/customers/lifecycle'
+    | '/_app/customers/tickets'
+    | '/_app/customers/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -77,17 +145,62 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppDashboardRouteImport
       parentRoute: typeof AppRoute
     }
+    '/_app/customers/': {
+      id: '/_app/customers/'
+      path: '/customers'
+      fullPath: '/customers/'
+      preLoaderRoute: typeof AppCustomersIndexRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/customers/tickets': {
+      id: '/_app/customers/tickets'
+      path: '/customers/tickets'
+      fullPath: '/customers/tickets'
+      preLoaderRoute: typeof AppCustomersTicketsRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/customers/lifecycle': {
+      id: '/_app/customers/lifecycle'
+      path: '/customers/lifecycle'
+      fullPath: '/customers/lifecycle'
+      preLoaderRoute: typeof AppCustomersLifecycleRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/customers/complaints': {
+      id: '/_app/customers/complaints'
+      path: '/customers/complaints'
+      fullPath: '/customers/complaints'
+      preLoaderRoute: typeof AppCustomersComplaintsRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/customers/$id': {
+      id: '/_app/customers/$id'
+      path: '/customers/$id'
+      fullPath: '/customers/$id'
+      preLoaderRoute: typeof AppCustomersIdRouteImport
+      parentRoute: typeof AppRoute
+    }
   }
 }
 
 interface AppRouteChildren {
   AppDashboardRoute: typeof AppDashboardRoute
   AppIndexRoute: typeof AppIndexRoute
+  AppCustomersIdRoute: typeof AppCustomersIdRoute
+  AppCustomersComplaintsRoute: typeof AppCustomersComplaintsRoute
+  AppCustomersLifecycleRoute: typeof AppCustomersLifecycleRoute
+  AppCustomersTicketsRoute: typeof AppCustomersTicketsRoute
+  AppCustomersIndexRoute: typeof AppCustomersIndexRoute
 }
 
 const AppRouteChildren: AppRouteChildren = {
   AppDashboardRoute: AppDashboardRoute,
   AppIndexRoute: AppIndexRoute,
+  AppCustomersIdRoute: AppCustomersIdRoute,
+  AppCustomersComplaintsRoute: AppCustomersComplaintsRoute,
+  AppCustomersLifecycleRoute: AppCustomersLifecycleRoute,
+  AppCustomersTicketsRoute: AppCustomersTicketsRoute,
+  AppCustomersIndexRoute: AppCustomersIndexRoute,
 }
 
 const AppRouteWithChildren = AppRoute._addFileChildren(AppRouteChildren)
