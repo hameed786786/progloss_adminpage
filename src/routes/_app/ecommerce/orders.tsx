@@ -24,7 +24,7 @@ function Page() {
         <div className="grid gap-4 md:grid-cols-4">
           <KpiCard label="Orders (MTD)" value="248" delta={18.4} icon={ShoppingBag} accent="primary" />
           <KpiCard label="Revenue" value="AED 62,180" delta={22.1} icon={Banknote} accent="success" />
-          <KpiCard label="In transit" value="14" icon={Truck} accent="info" />
+          <KpiCard label="In transit" value="14" icon={Truck} accent="primary" />
           <KpiCard label="Fulfilment rate" value="98.4%" delta={0.6} icon={CheckCircle2} accent="success" />
         </div>
         <Surface padded={false}>

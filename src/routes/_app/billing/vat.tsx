@@ -32,7 +32,7 @@ function Page() {
           <KpiCard label="Output VAT (MTD)" value="AED 13,421" delta={8.4} icon={FileCheck2} accent="primary" />
           <KpiCard label="Input VAT (MTD)" value="AED 2,180" icon={FileCheck2} accent="primary" />
           <KpiCard label="Net payable" value="AED 11,241" delta={9.2} icon={FileCheck2} accent="warning" />
-          <KpiCard label="Next filing" value="28 Jun 2026" icon={FileCheck2} accent="info" hint="VAT 201 · Q2" />
+          <KpiCard label="Next filing" value="28 Jun 2026" icon={FileCheck2} accent="primary" hint="VAT 201 · Q2" />
         </div>
         <div className="grid gap-4 xl:grid-cols-3">
           <Surface className="xl:col-span-2">

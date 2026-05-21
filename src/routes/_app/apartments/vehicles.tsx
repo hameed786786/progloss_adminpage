@@ -27,10 +27,10 @@ function Page() {
       <TopBar title="Vehicle Mapping" subtitle={`${VEHICLES.length} vehicles registered across ${APARTMENTS.length} communities`} />
       <div className="px-6 py-6 space-y-6">
         <div className="grid gap-4 md:grid-cols-4">
-          <KpiCard label="Total vehicles" value={VEHICLES.length} icon={Car} accent="primary" />
-          <KpiCard label="Active today" value={VEHICLES.filter(v=>v.status==="active").length} delta={5.2} icon={Car} accent="success" />
-          <KpiCard label="Queued wash" value={VEHICLES.filter(v=>v.status==="queued").length} icon={Hash} accent="warning" />
-          <KpiCard label="Communities" value={APARTMENTS.length} icon={MapPin} accent="primary" />
+          <KpiCard label="Total vehicles" value={String(VEHICLES.length)} icon={Car} accent="primary" />
+          <KpiCard label="Active today" value={String(VEHICLES.filter(v=>v.status==="active").length)} delta={5.2} icon={Car} accent="success" />
+          <KpiCard label="Queued wash" value={String(VEHICLES.filter(v=>v.status==="queued").length)} icon={Hash} accent="warning" />
+          <KpiCard label="Communities" value={String(APARTMENTS.length)} icon={MapPin} accent="primary" />
         </div>
         <Surface padded={false}>
           <div className="flex items-center gap-2 border-b border-border px-4 py-3">

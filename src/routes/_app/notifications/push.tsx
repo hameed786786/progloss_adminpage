@@ -25,7 +25,7 @@ function Page() {
           <KpiCard label="Sent (24h)" value="642" delta={4.1} icon={Send} accent="primary" />
           <KpiCard label="Open rate" value="68.2%" delta={2.4} icon={Bell} accent="success" />
           <KpiCard label="Subscribed devices" value="2,184" icon={Bell} accent="primary" />
-          <KpiCard label="Templates" value={TEMPLATES.length} icon={Bell} accent="primary" />
+          <KpiCard label="Templates" value={String(TEMPLATES.length)} icon={Bell} accent="primary" />
         </div>
         <Surface padded={false}>
           <div className="px-5 py-4 border-b border-border"><SectionTitle title="Push templates" /></div>

@@ -25,7 +25,7 @@ function Page() {
       }/>
       <div className="px-6 py-6 space-y-6">
         <div className="grid gap-4 md:grid-cols-4">
-          <KpiCard label="Total SKUs" value={PRODUCTS.length} icon={ShoppingBag} accent="primary" />
+          <KpiCard label="Total SKUs" value={String(PRODUCTS.length)} icon={ShoppingBag} accent="primary" />
           <KpiCard label="Units in stock" value={PRODUCTS.reduce((s,p)=>s+p.stock,0).toLocaleString()} icon={Package} accent="primary" />
           <KpiCard label="Units sold (MTD)" value={PRODUCTS.reduce((s,p)=>s+p.sold,0).toLocaleString()} delta={14.2} icon={ShoppingBag} accent="success" />
           <KpiCard label="Low / out of stock" value="2" icon={Package} accent="warning" />

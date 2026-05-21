@@ -18,7 +18,7 @@ function Page() {
         <div className="grid gap-4 md:grid-cols-4">
           <KpiCard label="Total MRR" value={`AED ${total.toLocaleString()}`} delta={8.2} icon={Banknote} accent="primary" />
           <KpiCard label="Top Community" value="Burj Vista 1" delta={11.4} icon={TrendingUp} accent="success" hint="AED 52,110/mo" />
-          <KpiCard label="Communities" value={APARTMENTS.length} icon={Building2} accent="primary" hint="6 active billing" />
+          <KpiCard label="Communities" value={String(APARTMENTS.length)} icon={Building2} accent="primary" hint="6 active billing" />
           <KpiCard label="ARPU / community" value={`AED ${Math.round(total/APARTMENTS.length).toLocaleString()}`} delta={3.1} icon={Banknote} accent="success" />
         </div>
         <Surface>
