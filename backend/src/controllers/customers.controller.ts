@@ -1,0 +1,54 @@
+import { Request, Response, NextFunction } from 'express';
+import { customerService } from '../services/customer.service';
+import { emit } from '../integrations/socket';
+
+export const list = async (_req: Request, res: Response, next: NextFunction) => {
+  try {
+    const data = await customerService.list();
+    res.json({ success: true, data });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const get = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const data = await customerService.get(req.params.id);
+    res.json({ success: true, data });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const create = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const created = await customerService.create(req.body);
+    const list = await customerService.list();
+    emit('customers:update', list);
+    res.status(201).json({ success: true, data: created });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const update = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const updated = await customerService.update(req.params.id, req.body);
+    const list = await customerService.list();
+    emit('customers:update', list);
+    res.json({ success: true, data: updated });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const remove = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    await customerService.remove(req.params.id);
+    const list = await customerService.list();
+    emit('customers:update', list);
+    res.status(204).send();
+  } catch (error) {
+    next(error);
+  }
+};
