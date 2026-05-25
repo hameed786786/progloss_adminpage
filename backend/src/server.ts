@@ -6,10 +6,17 @@ import { logger } from './common/logger';
 import { initSocket } from './integrations/socket';
 
 async function start() {
-  await connect();
-
   const server = createServer(app);
   initSocket(server);
+
+  server.listen(Number(env.PORT), () => {
+    logger.info({ port: env.PORT }, `Progloss backend listening on http://localhost:${env.PORT}`);
+  });
+
+  connect().catch((error) => {
+    logger.error({ error }, 'database connection failed after server start');
+  });
+
   // Start MongoDB change stream watchers to broadcast realtime changes
   try {
     const { initMongoWatches } = await import('./integrations/mongoWatch.js');
@@ -17,10 +24,6 @@ async function start() {
   } catch (err) {
     // ignore
   }
-
-  server.listen(Number(env.PORT), () => {
-    logger.info({ port: env.PORT }, `Progloss backend listening on http://localhost:${env.PORT}`);
-  });
 
   const shutdown = () => {
     logger.info('shutting down');
