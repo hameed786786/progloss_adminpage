@@ -1,4 +1,9 @@
-const API_BASE = (import.meta.env.VITE_API_URL ?? '').replace(/\/$/, '');
+const DEFAULT_API_BASE = 'https://progloss-adminpage-xg48.onrender.com';
+const API_BASE = (import.meta.env.VITE_API_URL ?? DEFAULT_API_BASE).replace(/\/$/, '');
+
+export function apiUrl(path: string) {
+  return `${API_BASE}${path}`;
+}
 
 const ACCESS_TOKEN_KEY = 'progloss.accessToken';
 

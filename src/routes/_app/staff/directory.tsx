@@ -6,7 +6,7 @@ import { KpiCard } from "@/components/app/KpiCard";
 import { StatusChip } from "@/components/app/StatusChip";
 import { SuccessCard } from "@/components/app/SuccessCard";
 import { UserCog, Search, Plus } from "lucide-react";
-import { fetchStaff, saveStaff, getCurrentUserRole } from "@/lib/apiClient";
+import { apiUrl, fetchStaff, saveStaff, getCurrentUserRole } from "@/lib/apiClient";
 import { fetchRoles } from "@/lib/apiClient";
 import useRealtime from "@/lib/useRealtime";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
@@ -42,7 +42,7 @@ function Page() {
 
   useEffect(() => {
     let mounted = true;
-    fetch('/api/setup')
+    fetch(apiUrl('/api/setup'), { credentials: 'include' })
       .then((r) => r.json())
       .then((payload) => {
         if (!mounted) return;
@@ -143,7 +143,7 @@ function Page() {
                 {filteredRows.map(s => (
                   <tr key={s.id} className="border-t border-border hover:bg-surface-muted/60">
                     <td className="px-4 py-3 font-mono font-bold">{s.id}</td>
-                    <td className="px-4 py-3"><div className="flex items-center gap-2.5"><div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10 text-[10.5px] font-black text-primary">{s.name.split(" ").map(n=>n[0]).slice(0,2).join("")}</div><span className="font-bold">{s.name}</span></div></td>
+                    <td className="px-4 py-3"><div className="flex items-center gap-2.5"><div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10 text-[10.5px] font-black text-primary">{s.name.split(" ").map((n: any[])=>n[0]).slice(0,2).join("")}</div><span className="font-bold">{s.name}</span></div></td>
                     <td className="px-4 py-3">{s.role}</td>
                     <td className="px-4 py-3 text-muted-foreground">{s.zone}</td>
                     <td className="px-4 py-3">{s.shift ?? "—"}</td>
