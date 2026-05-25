@@ -5,7 +5,7 @@
   "installCommand": "bun install",
   "outputDirectory": "dist/client",
   "rewrites": [
-    { "source": "/(.*)", "destination": "/_shell.html" }
+    { "source": "/(.*)", "destination": "/index.html" }
   ],
   "cleanUrls": true,
   "trailingSlash": false
