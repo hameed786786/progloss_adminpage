@@ -6,10 +6,13 @@
 // You can pass additional config via defineConfig({ vite: { ... } }) if needed.
 import { defineConfig } from "@lovable.dev/vite-tanstack-config";
 
-// Use the Vercel adapter so the app emits a deployable Vercel output instead of Cloudflare-only artifacts.
+// Disable the wrapper's Cloudflare build layer so TanStack Start can prerender a static shell for Vercel.
 export default defineConfig({
+  cloudflare: false,
   tanstackStart: {
-    target: "vercel",
+    spa: {
+      enabled: true,
+    },
     server: { entry: "server" },
   },
 });
