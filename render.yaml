@@ -1,0 +1,34 @@
+services:
+  - type: web
+    name: progloss-backend
+    env: node
+    rootDir: backend
+    buildCommand: npm install --include=dev && npm run build
+    startCommand: npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: MONGO_URL
+        sync: false
+      - key: JWT_SECRET
+        sync: false
+      - key: DNS_SERVERS
+        sync: false
+      - key: MONGO_APP_NAME
+        value: progloss
+      - key: MONGO_MAX_POOL_SIZE
+        value: "10"
+      - key: MONGO_SERVER_SELECTION_TIMEOUT_MS
+        value: "10000"
+      - key: MONGO_CONNECT_TIMEOUT_MS
+        value: "10000"
+      - key: MONGO_RETRY_WRITES
+        value: "true"
+      - key: JWT_ACCESS_EXPIRES
+        value: 45m
+      - key: JWT_REFRESH_EXPIRES_DAYS
+        value: "30"
+      - key: RATE_LIMIT_WINDOW_MS
+        value: "900000"
+      - key: RATE_LIMIT_MAX
+        value: "100"
