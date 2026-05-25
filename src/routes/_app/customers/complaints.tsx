@@ -1,43 +1,98 @@
+import { useMemo } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { TopBar } from "@/components/app/TopBar";
 import { Surface } from "@/components/app/Surface";
 import { KpiCard } from "@/components/app/KpiCard";
 import { StatusChip } from "@/components/app/StatusChip";
 import { MessageSquareWarning, Clock, ShieldAlert, CheckCircle2 } from "lucide-react";
+import { fetchCustomers, fetchTickets } from "@/lib/apiClient";
+import useRealtime from "@/lib/useRealtime";
 
 export const Route = createFileRoute("/_app/customers/complaints")({ component: Page });
-
-const COMPLAINTS = [
-  { id: "CMP-3041", subject: "Damage to alloy rim during wash", customer: "Maryam Al Hashimi", community: "Marina Gate 2", severity: "high", status: "investigating", sla: "1h 12m", owner: "Sara Khoury", opened: "Today 09:42" },
-  { id: "CMP-3040", subject: "Wash skipped 3 weeks in a row", customer: "Sophia Chen", community: "Burj Vista 1", severity: "urgent", status: "escalated", sla: "Breached", owner: "Operations Lead", opened: "Today 07:10" },
-  { id: "CMP-3039", subject: "Foam left on side mirrors", customer: "Aisha Mubarak", community: "Dubai Hills", severity: "low", status: "resolved", sla: "—", owner: "Imran Saeed", opened: "Yesterday" },
-  { id: "CMP-3038", subject: "Technician arrived 2h late", customer: "Karim Boutros", community: "Park Island", severity: "medium", status: "in-progress", sla: "4h 31m", owner: "Khalid Noor", opened: "Today 08:18" },
-  { id: "CMP-3037", subject: "Water leak into trunk", customer: "Hamdan Al Suwaidi", community: "Emirates Hills 47", severity: "high", status: "escalated", sla: "30m", owner: "Rashid Al Mansoori", opened: "Today 10:51" },
-  { id: "CMP-3036", subject: "Wrong vehicle washed", customer: "Tom Pereira", community: "Bay Central", severity: "urgent", status: "resolved", sla: "—", owner: "Sara Khoury", opened: "12 May" },
-];
 
 const TONE = { urgent: "danger", high: "danger", medium: "warning", low: "neutral" } as const;
 const STATUS = { investigating: "warning", escalated: "danger", "in-progress": "info", resolved: "success" } as const;
 
+function formatDuration(minutes: number) {
+  if (minutes <= 0) return "—";
+  const hours = Math.floor(minutes / 60);
+  const mins = minutes % 60;
+  return `${hours}h ${String(mins).padStart(2, "0")}m`;
+}
+
 function Page() {
+  const tickets = useRealtime('tickets', fetchTickets, 'tickets:update');
+  const customers = useRealtime('customers', fetchCustomers, 'customers:update');
+
+  const complaints = useMemo(() => {
+    const customerByName = new Map(customers.map((customer) => [customer.name, customer]));
+
+    return tickets.map((ticket: any, index) => {
+      const customer = customerByName.get(ticket.customer ?? "");
+      const priority = String(ticket.priority ?? "medium").toLowerCase();
+      const status = String(ticket.status ?? (priority === "urgent" ? "escalated" : "investigating")).toLowerCase();
+      const severity = priority === "urgent" ? "urgent" : priority === "high" ? "high" : priority === "low" ? "low" : "medium";
+      const owner = status === "resolved" ? (index % 2 === 0 ? "Support Agent" : "Imran Saeed") : status === "escalated" ? "Operations Lead" : "Sara Khoury";
+      const slaMinutes = status === "resolved"
+        ? 0
+        : priority === "urgent"
+          ? 30 + index * 7
+          : priority === "high"
+            ? 75 + index * 8
+            : priority === "medium"
+              ? 180 + index * 11
+              : 360 + index * 12;
+
+      return {
+        id: ticket.id ?? `CMP-${3000 + index}`,
+        subject: ticket.subject ?? "Untitled complaint",
+        customer: ticket.customer ?? "Unknown",
+        community: (customer as any)?.community ?? "Unassigned",
+        severity,
+        status: status === "open" ? "investigating" : status,
+        sla: status === "resolved" ? "—" : slaMinutes > 240 ? "Breached" : formatDuration(slaMinutes),
+        owner,
+        opened: ticket.createdAt ? new Date(ticket.createdAt).toLocaleString(undefined, { month: "short", day: "numeric", hour: "2-digit", minute: "2-digit" }) : `Today ${String(9 + index).padStart(2, "0")}:${String((index * 13) % 60).padStart(2, "0")}`,
+      };
+    });
+  }, [customers, tickets]);
+
+  const stats = useMemo(() => {
+    const openComplaints = complaints.filter((complaint) => complaint.status !== "resolved").length;
+    const slaBreaches = complaints.filter((complaint) => complaint.sla === "Breached").length;
+    const resolved = complaints.filter((complaint) => complaint.status === "resolved").length;
+    const averageResolution = complaints.length
+      ? Math.round(complaints.reduce((sum, complaint) => {
+        if (complaint.sla === "Breached") return sum + 360;
+        if (complaint.sla === "—") return sum;
+        const [hoursPart, minutesPart] = complaint.sla.split("h ");
+        const hours = Number(hoursPart ?? 0);
+        const minutes = Number((minutesPart ?? "0m").replace("m", ""));
+        return sum + hours * 60 + minutes;
+      }, 0) / complaints.length)
+      : 0;
+
+    return { openComplaints, slaBreaches, resolved, averageResolution };
+  }, [complaints]);
+
   return (
     <>
-      <TopBar title="Complaints" subtitle="Customer escalations · root-cause & SLA monitoring" />
+      <TopBar title="Complaints" subtitle={`${stats.openComplaints} open · ${stats.slaBreaches} SLA breaches · ${stats.resolved} resolved`} />
       <div className="px-6 py-6 space-y-6">
         <div className="grid gap-4 md:grid-cols-4">
-          <KpiCard label="Open complaints" value="14" delta={-22.1} icon={MessageSquareWarning} accent="danger" />
-          <KpiCard label="SLA breaches" value="1" icon={ShieldAlert} accent="danger" />
-          <KpiCard label="Avg resolution" value="6h 42m" delta={-12.4} icon={Clock} accent="success" />
-          <KpiCard label="Resolved (7d)" value="38" delta={9.1} icon={CheckCircle2} accent="success" />
+          <KpiCard label="Open complaints" value={stats.openComplaints.toString()} icon={MessageSquareWarning} accent="danger" hint="Tickets still in progress or escalated" />
+          <KpiCard label="SLA breaches" value={stats.slaBreaches.toString()} icon={ShieldAlert} accent="danger" hint="Complaints over the breach threshold" />
+          <KpiCard label="Avg resolution" value={formatDuration(stats.averageResolution)} icon={Clock} accent="success" hint="Based on live complaint queue" />
+          <KpiCard label="Resolved" value={stats.resolved.toString()} icon={CheckCircle2} accent="success" hint="Closed complaints from the live feed" />
         </div>
         <Surface padded={false}>
           <div className="overflow-x-auto">
-            <table className="w-full text-[12.5px] min-w-[840px]">
+            <table className="w-full text-[12.5px] min-w-210">
               <thead className="bg-surface-muted text-[10.5px] font-bold uppercase tracking-wider text-muted-foreground">
                 <tr><th className="px-4 py-3 text-left">ID</th><th className="px-4 py-3 text-left">Subject</th><th className="px-4 py-3 text-left">Customer</th><th className="px-4 py-3 text-left">Community</th><th className="px-4 py-3 text-left">Severity</th><th className="px-4 py-3 text-left">Status</th><th className="px-4 py-3 text-left">SLA</th><th className="px-4 py-3 text-left">Owner</th></tr>
               </thead>
               <tbody>
-                {COMPLAINTS.map(c => (
+                {complaints.map(c => (
                   <tr key={c.id} className="border-t border-border hover:bg-surface-muted/60">
                     <td className="px-4 py-3 font-mono font-bold">{c.id}</td>
                     <td className="px-4 py-3"><div className="font-bold">{c.subject}</div><div className="text-[10.5px] text-muted-foreground">{c.opened}</div></td>

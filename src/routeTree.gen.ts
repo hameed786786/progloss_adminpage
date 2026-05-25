@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as LoginRouteImport } from './routes/login'
 import { Route as AppRouteImport } from './routes/_app'
 import { Route as AppIndexRouteImport } from './routes/_app/index'
 import { Route as AppSettingsRouteImport } from './routes/_app/settings'
@@ -57,6 +58,11 @@ import { Route as AppApartmentsCommunitiesRouteImport } from './routes/_app/apar
 import { Route as AppBillingInvoicesIndexRouteImport } from './routes/_app/billing/invoices/index'
 import { Route as AppBillingInvoicesIdRouteImport } from './routes/_app/billing/invoices/$id'
 
+const LoginRoute = LoginRouteImport.update({
+  id: '/login',
+  path: '/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AppRoute = AppRouteImport.update({
   id: '/_app',
   getParentRoute: () => rootRouteImport,
@@ -296,6 +302,7 @@ const AppBillingInvoicesIdRoute = AppBillingInvoicesIdRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof AppIndexRoute
+  '/login': typeof LoginRoute
   '/analytics': typeof AppAnalyticsRoute
   '/audit': typeof AppAuditRoute
   '/dashboard': typeof AppDashboardRoute
@@ -343,6 +350,7 @@ export interface FileRoutesByFullPath {
   '/billing/invoices/': typeof AppBillingInvoicesIndexRoute
 }
 export interface FileRoutesByTo {
+  '/login': typeof LoginRoute
   '/analytics': typeof AppAnalyticsRoute
   '/audit': typeof AppAuditRoute
   '/dashboard': typeof AppDashboardRoute
@@ -393,6 +401,7 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/_app': typeof AppRouteWithChildren
+  '/login': typeof LoginRoute
   '/_app/analytics': typeof AppAnalyticsRoute
   '/_app/audit': typeof AppAuditRoute
   '/_app/dashboard': typeof AppDashboardRoute
@@ -444,6 +453,7 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/login'
     | '/analytics'
     | '/audit'
     | '/dashboard'
@@ -491,6 +501,7 @@ export interface FileRouteTypes {
     | '/billing/invoices/'
   fileRoutesByTo: FileRoutesByTo
   to:
+    | '/login'
     | '/analytics'
     | '/audit'
     | '/dashboard'
@@ -540,6 +551,7 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/_app'
+    | '/login'
     | '/_app/analytics'
     | '/_app/audit'
     | '/_app/dashboard'
@@ -590,10 +602,18 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   AppRoute: typeof AppRouteWithChildren
+  LoginRoute: typeof LoginRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/login': {
+      id: '/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof LoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/_app': {
       id: '/_app'
       path: ''
@@ -1028,7 +1048,18 @@ const AppRouteWithChildren = AppRoute._addFileChildren(AppRouteChildren)
 
 const rootRouteChildren: RootRouteChildren = {
   AppRoute: AppRouteWithChildren,
+  LoginRoute: LoginRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}

@@ -2,22 +2,28 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { TopBar } from "@/components/app/TopBar";
 import { Surface, SectionTitle } from "@/components/app/Surface";
 import { StatusChip } from "@/components/app/StatusChip";
-import { INVOICES } from "@/lib/data";
+import { fetchInvoices } from "@/lib/apiClient";
+import useRealtime from "@/lib/useRealtime";
 import { ArrowLeft, Download, Send, Printer, Mail, CheckCircle2, Clock, FileText } from "lucide-react";
 
 export const Route = createFileRoute("/_app/billing/invoices/$id")({ component: InvoiceDetail });
 
 function InvoiceDetail() {
   const { id } = Route.useParams();
-  const inv = INVOICES.find(i => i.id === id) ?? INVOICES[0];
+  const invoices = useRealtime('invoices', fetchInvoices, 'invoices:update');
+  const inv = invoices.find((item) => item.id === id) ?? invoices[0] ?? { id, customer: 'Unknown', community: 'N/A', date: '—', plan: 'N/A', plate: 'N/A', status: 'pending', subtotal: 0, vat: 0, total: 0 };
+
   const items = [
     { name: `${inv.plan} subscription`, qty: 1, price: inv.subtotal * 0.85, total: inv.subtotal * 0.85 },
     { name: "Premium ceramic top-up", qty: 1, price: inv.subtotal * 0.10, total: inv.subtotal * 0.10 },
     { name: "Interior detail add-on", qty: 1, price: inv.subtotal * 0.05, total: inv.subtotal * 0.05 },
   ];
+
   return (
     <>
-      <TopBar title={inv.id} subtitle={`${inv.customer} · ${inv.community} · ${inv.date}`}
+      <TopBar
+        title={inv.id}
+        subtitle={`${inv.customer} · ${inv.community} · ${inv.date}`}
         actions={
           <div className="flex items-center gap-2">
             <button className="inline-flex h-9 items-center gap-1.5 rounded-xl border border-border bg-surface px-3 text-[12.5px] font-bold hover:bg-accent"><Printer className="h-3.5 w-3.5" /> Print</button>
@@ -30,8 +36,7 @@ function InvoiceDetail() {
         <Link to="/billing/invoices" className="inline-flex items-center gap-1 text-[12px] font-bold text-muted-foreground hover:text-foreground"><ArrowLeft className="h-3.5 w-3.5" /> Invoices</Link>
 
         <div className="grid gap-4 xl:grid-cols-3">
-          {/* PDF-like preview */}
-          <Surface className="xl:col-span-2 !p-0 overflow-hidden">
+          <Surface className="xl:col-span-2 p-0! overflow-hidden">
             <div className="bg-primary px-8 py-6 text-primary-foreground">
               <div className="flex items-start justify-between">
                 <div>
@@ -68,7 +73,7 @@ function InvoiceDetail() {
                     <tr><th className="px-3 py-2 text-left">Service</th><th className="px-3 py-2 text-right">Qty</th><th className="px-3 py-2 text-right">Unit (AED)</th><th className="px-3 py-2 text-right">Amount</th></tr>
                   </thead>
                   <tbody>
-                    {items.map((it,i) => (
+                    {items.map((it, i) => (
                       <tr key={i} className="border-t border-border">
                         <td className="px-3 py-3 font-bold">{it.name}</td>
                         <td className="px-3 py-3 text-right tabular-nums">{it.qty}</td>
@@ -109,7 +114,7 @@ function InvoiceDetail() {
                   { i: CheckCircle2, t: inv.status === "paid" ? "Receipt issued" : "Receipt pending", ts: inv.status === "paid" ? inv.date + " · 06:06" : "—", done: inv.status === "paid" },
                 ].map((e, i) => (
                   <div key={i} className="relative">
-                    <div className={`absolute -left-[18px] top-0.5 flex h-3 w-3 items-center justify-center rounded-full ring-4 ring-background ${e.done ? "bg-primary" : "bg-border"}`} />
+                    <div className={`absolute -left-4.5 top-0.5 flex h-3 w-3 items-center justify-center rounded-full ring-4 ring-background ${e.done ? "bg-primary" : "bg-border"}`} />
                     <div className="flex items-start gap-2">
                       <e.i className={`mt-0.5 h-3.5 w-3.5 ${e.done ? "text-foreground" : "text-muted-foreground"}`} />
                       <div className="flex-1">

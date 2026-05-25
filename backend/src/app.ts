@@ -10,6 +10,7 @@ import { errorHandler } from './middleware/error.middleware';
 import { env } from './config/env';
 import { logger } from './common/logger';
 import { sendSuccess } from './utils';
+import healthRouter from './routes/health.route';
 
 const app = express();
 
@@ -19,7 +20,7 @@ app.use(...securityMiddleware);
 app.use(morgan("combined"));
 app.use(express.json());
 
-app.use('/health', (_req, res) => sendSuccess(res, { service: 'progloss-backend', env: env.NODE_ENV }));
+app.use('/health', healthRouter);
 app.use("/api", apiRouter);
 app.use('/api/v1', apiRouter);
 

@@ -2,17 +2,38 @@ import { createFileRoute } from "@tanstack/react-router";
 import { TopBar } from "@/components/app/TopBar";
 import { Surface } from "@/components/app/Surface";
 import { StatusChip } from "@/components/app/StatusChip";
-import { APARTMENTS } from "@/lib/data";
 import { Building2, Users, Car, Wrench, Banknote } from "lucide-react";
+import { fetchCustomers, fetchStaff, fetchInvoices } from "@/lib/apiClient";
+import useRealtime from "@/lib/useRealtime";
 
 export const Route = createFileRoute("/_app/apartments/communities")({ component: Communities });
 
 function Communities() {
+  const customers = useRealtime('customers', fetchCustomers, 'customers:update');
+  const staff = useRealtime('staff', fetchStaff, 'staff:update');
+  const invoices = useRealtime('invoices', fetchInvoices, 'invoices:update');
+
+  const communities = Array.from(new Set(customers.map((c) => c.community).filter(Boolean))).map((name) => {
+    const cust = customers.filter((c) => c.community === name);
+    const invs = invoices.filter((i) => i.community === name);
+    const st = staff.filter((u) => u.building === name || u.zone === name);
+    const mrr = invs.reduce((s, x) => s + Number(x.total ?? 0), 0);
+    return {
+      name,
+      units: cust.length || 1,
+      vehicles: cust.reduce((s, x) => s + (x.vehicles ?? 0), 0),
+      residents: cust.length,
+      staff: st.length,
+      mrr,
+      complaints: invs.filter((x) => x.status !== 'paid').length,
+      occupancy: Math.min(100, Math.max(cust.length * 12, 10)),
+    };
+  });
   return (
     <>
-      <TopBar title="Communities" subtitle={`${APARTMENTS.length} buildings under management · Dubai region`} />
+      <TopBar title="Communities" subtitle={`${communities.length} buildings under management · Dubai region`} />
       <div className="px-6 py-6 grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-        {APARTMENTS.map((a) => (
+        {communities.map((a) => (
           <Surface key={a.name}>
             <div className="flex items-start justify-between gap-3">
               <div className="flex items-center gap-2.5">

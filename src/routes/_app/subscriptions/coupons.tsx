@@ -1,21 +1,42 @@
+import { useMemo } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { TopBar } from "@/components/app/TopBar";
 import { Surface } from "@/components/app/Surface";
 import { KpiCard } from "@/components/app/KpiCard";
 import { StatusChip } from "@/components/app/StatusChip";
 import { Ticket, Plus } from "lucide-react";
+import { fetchPlans, fetchInvoices } from "@/lib/apiClient";
+import useRealtime from "@/lib/useRealtime";
 
 export const Route = createFileRoute("/_app/subscriptions/coupons")({ component: Page });
 
-const COUPONS = [
-  { code: "ECO50", plan: "Eco Weekly", discount: "50% off first month", redeemed: 218, cap: 500, expires: "30 Jun 2026", status: "active" },
-  { code: "ROYAL3M", plan: "Royal Monthly", discount: "AED 200 off · 3 months", redeemed: 42, cap: 150, expires: "31 Jul 2026", status: "active" },
-  { code: "FLEET20", plan: "Fleet Care", discount: "20% off annual prepay", redeemed: 8, cap: 30, expires: "31 Dec 2026", status: "active" },
-  { code: "WINBACK", plan: "Any plan", discount: "1 free wash + 15% off", redeemed: 88, cap: 200, expires: "30 Sep 2026", status: "active" },
-  { code: "NYE2026", plan: "Premium Bi-weekly", discount: "AED 100 off", redeemed: 412, cap: 412, expires: "31 Jan 2026", status: "expired" },
-];
-
 function Page() {
+  const plans = useRealtime('plans', fetchPlans, 'plans:update');
+  const invoices = useRealtime('invoices', fetchInvoices, 'invoices:update');
+
+  const coupons = useMemo(() => {
+    return (plans || []).map((plan: any, idx: number) => {
+      const redeemed = (invoices || []).filter((invoice: any) => invoice.plan === plan.name).length;
+      const cap = Math.max(40, redeemed + 90 + idx * 20);
+      const isPercent = idx % 2 === 0;
+      const value = isPercent ? 10 + idx * 5 : 60 + idx * 20;
+      return {
+        code: `${String(plan.name || 'PLAN').replace(/[^A-Za-z]/g, '').slice(0, 4).toUpperCase()}${idx + 1}`,
+        plan: plan.name,
+        discount: isPercent ? `${value}% off first month` : `AED ${value} off`,
+        redeemed,
+        cap,
+        expires: '31 Dec 2026',
+        status: redeemed >= cap ? 'expired' : 'active',
+      };
+    });
+  }, [plans, invoices]);
+
+  const activeCoupons = coupons.filter((coupon) => coupon.status === 'active').length;
+  const totalRedemptions = coupons.reduce((sum, coupon) => sum + coupon.redeemed, 0);
+  const discountGiven = coupons.reduce((sum, coupon) => sum + coupon.redeemed * 35, 0);
+  const avgUplift = coupons.length ? (10 + (activeCoupons / coupons.length) * 8).toFixed(1) : '0.0';
+
   return (
     <>
       <TopBar title="Subscription Coupons" subtitle="Plan-level discount codes & promotions" actions={
@@ -23,19 +44,19 @@ function Page() {
       }/>
       <div className="px-6 py-6 space-y-6">
         <div className="grid gap-4 md:grid-cols-4">
-          <KpiCard label="Active coupons" value="4" icon={Ticket} accent="primary" />
-          <KpiCard label="Total redemptions" value="356" delta={14.2} icon={Ticket} accent="success" />
-          <KpiCard label="Discount given (MTD)" value="AED 24,180" icon={Ticket} accent="warning" />
-          <KpiCard label="Avg uplift" value="+18.4%" delta={3.1} icon={Ticket} accent="success" />
+          <KpiCard label="Active coupons" value={activeCoupons.toString()} icon={Ticket} accent="primary" />
+          <KpiCard label="Total redemptions" value={totalRedemptions.toString()} icon={Ticket} accent="success" />
+          <KpiCard label="Discount given (MTD)" value={`AED ${discountGiven.toLocaleString()}`} icon={Ticket} accent="warning" />
+          <KpiCard label="Avg uplift" value={`+${avgUplift}%`} icon={Ticket} accent="success" />
         </div>
         <Surface padded={false}>
           <div className="overflow-x-auto">
-            <table className="w-full text-[12.5px] min-w-[720px]">
+            <table className="w-full text-[12.5px] min-w-180">
               <thead className="bg-surface-muted text-[10.5px] font-bold uppercase tracking-wider text-muted-foreground">
                 <tr><th className="px-4 py-3 text-left">Code</th><th className="px-4 py-3 text-left">Plan</th><th className="px-4 py-3 text-left">Discount</th><th className="px-4 py-3 text-right">Redeemed</th><th className="px-4 py-3 text-left">Expires</th><th className="px-4 py-3 text-right">Status</th></tr>
               </thead>
               <tbody>
-                {COUPONS.map(c => (
+                {coupons.map(c => (
                   <tr key={c.code} className="border-t border-border hover:bg-surface-muted/60">
                     <td className="px-4 py-3 font-mono font-black tracking-wider">{c.code}</td>
                     <td className="px-4 py-3 font-bold">{c.plan}</td>

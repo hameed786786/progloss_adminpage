@@ -1,28 +1,40 @@
+import { useMemo } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { TopBar } from "@/components/app/TopBar";
 import { Surface, SectionTitle } from "@/components/app/Surface";
 import { StatusChip } from "@/components/app/StatusChip";
 import { Download, FileSpreadsheet, FileText, CheckCircle2 } from "lucide-react";
+import { fetchExportJobs, createExportJob, downloadExportJob } from "@/lib/apiClient";
+import useRealtime from "@/lib/useRealtime";
 
 export const Route = createFileRoute("/_app/billing/exports")({ component: Page });
 
-const TEMPLATES = [
-  { name: "VAT Return (FTA)", desc: "Quarterly VAT 201 ready for FTA portal", format: "XLSX", icon: FileSpreadsheet },
-  { name: "Revenue Ledger", desc: "Per-invoice ledger w/ tax breakdown", format: "CSV", icon: FileSpreadsheet },
-  { name: "Aged Receivables", desc: "0-30 / 31-60 / 61-90 / 90+ buckets", format: "PDF", icon: FileText },
-  { name: "Subscription MRR", desc: "Plan-level MRR + churn cohort", format: "XLSX", icon: FileSpreadsheet },
-  { name: "Auto-bill summary", desc: "Per-cycle invoice generation log", format: "CSV", icon: FileSpreadsheet },
-  { name: "Refund Register", desc: "All refunds w/ reason & approver", format: "PDF", icon: FileText },
-];
-
-const RECENT = [
-  { name: "VAT Q1 2026.xlsx", by: "Layla Hassan", size: "248 KB", at: "Today 11:18", status: "ready" },
-  { name: "Revenue April.csv", by: "Layla Hassan", size: "1.2 MB", at: "12 May 09:02", status: "ready" },
-  { name: "MRR Cohort May.xlsx", by: "System", size: "412 KB", at: "12 May 06:00", status: "ready" },
-  { name: "Aged AR.pdf", by: "Rashid Al Mansoori", size: "188 KB", at: "10 May 16:42", status: "expired" },
-];
-
 function Page() {
+  const jobs = useRealtime('exportJobs', fetchExportJobs, 'exportJobs:update');
+  const templates = useMemo(() => {
+    const seen = new Set<string>();
+    return (jobs || [])
+      .map((job: any) => ({
+        name: job.template || job.name || 'Custom export',
+        desc: job.desc || 'Generated finance export',
+        format: String(job.format || 'CSV').toUpperCase(),
+      }))
+      .filter((template: any) => {
+        if (seen.has(template.name)) return false;
+        seen.add(template.name);
+        return true;
+      });
+  }, [jobs]);
+
+  const recent = useMemo(() => (jobs || []).map((job: any) => ({
+    id: job.id,
+    name: job.fileName || `${job.name || job.id}.${String(job.format || 'csv').toLowerCase()}`,
+    by: job.by || 'System',
+    size: job.size || '—',
+    at: job.at || '—',
+    status: job.status || 'queued',
+  })), [jobs]);
+
   return (
     <>
       <TopBar title="Export Reports" subtitle="Finance-grade exports · VAT, ledger, cohort, aged AR" />
@@ -30,13 +42,23 @@ function Page() {
         <Surface>
           <SectionTitle title="Export templates" sub="Generate FTA-compliant & internal finance reports" />
           <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-3">
-            {TEMPLATES.map(t => (
+            {templates.map((t: any) => (
               <div key={t.name} className="group flex items-start gap-3 rounded-xl border border-border bg-surface-muted/40 p-4 hover:bg-surface-muted">
-                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10 text-primary"><t.icon className="h-4 w-4"/></div>
+                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10 text-primary">{t.format === 'PDF' ? <FileText className="h-4 w-4"/> : <FileSpreadsheet className="h-4 w-4"/>}</div>
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2"><span className="text-[13px] font-black">{t.name}</span><span className="text-[10px] font-bold text-muted-foreground bg-surface px-1.5 py-0.5 rounded">{t.format}</span></div>
                   <div className="mt-0.5 text-[11.5px] text-muted-foreground">{t.desc}</div>
-                  <button className="mt-2.5 inline-flex h-7 items-center gap-1 rounded-md bg-primary px-2 text-[11px] font-bold text-primary-foreground"><Download className="h-3 w-3"/> Generate</button>
+                  <button
+                    onClick={async () => {
+                      try {
+                        await createExportJob({ template: t.name, format: t.format, desc: t.desc });
+                      } catch (err) {
+                        // fallback: show basic alert for now
+                        // eslint-disable-next-line no-alert
+                        alert((err as Error).message || 'Failed to create export job');
+                      }
+                    }}
+                    className="mt-2.5 inline-flex h-7 items-center gap-1 rounded-md bg-primary px-2 text-[11px] font-bold text-primary-foreground"><Download className="h-3 w-3"/> Generate</button>
                 </div>
               </div>
             ))}
@@ -45,19 +67,33 @@ function Page() {
         <Surface padded={false}>
           <div className="px-5 py-4 border-b border-border"><SectionTitle title="Recent exports" sub="Last 30 days" /></div>
           <div className="overflow-x-auto">
-            <table className="w-full text-[12.5px] min-w-[640px]">
+            <table className="w-full text-[12.5px] min-w-160">
               <thead className="bg-surface-muted text-[10.5px] font-bold uppercase tracking-wider text-muted-foreground">
                 <tr><th className="px-4 py-3 text-left">File</th><th className="px-4 py-3 text-left">Generated by</th><th className="px-4 py-3 text-left">Size</th><th className="px-4 py-3 text-left">At</th><th className="px-4 py-3 text-right">Status</th><th className="px-4 py-3 text-right"></th></tr>
               </thead>
               <tbody>
-                {RECENT.map(r => (
-                  <tr key={r.name} className="border-t border-border hover:bg-surface-muted/60">
+                {recent.map((r: any) => (
+                  <tr key={r.id || r.name} className="border-t border-border hover:bg-surface-muted/60">
                     <td className="px-4 py-3 font-bold">{r.name}</td>
                     <td className="px-4 py-3 text-muted-foreground">{r.by}</td>
                     <td className="px-4 py-3 tabular-nums">{r.size}</td>
                     <td className="px-4 py-3 text-muted-foreground">{r.at}</td>
                     <td className="px-4 py-3 text-right"><StatusChip tone={r.status==="ready"?"success":"neutral"}>{r.status==="ready" && <CheckCircle2 className="h-2.5 w-2.5"/>}{r.status}</StatusChip></td>
-                    <td className="px-4 py-3 text-right"><button className="text-[11px] font-bold text-primary hover:underline">Download</button></td>
+                    <td className="px-4 py-3 text-right"><button
+                      onClick={async () => {
+                        if (r.status !== 'ready') {
+                          // eslint-disable-next-line no-alert
+                          alert('File not ready yet');
+                          return;
+                        }
+                        try {
+                          await downloadExportJob(r.id, r.name);
+                        } catch (err) {
+                          // eslint-disable-next-line no-alert
+                          alert((err as Error).message || 'Failed to download file');
+                        }
+                      }}
+                      className="text-[11px] font-bold text-primary hover:underline">Download</button></td>
                   </tr>
                 ))}
               </tbody>

@@ -1,9 +1,19 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { useEffect, useMemo, useState } from 'react';
 import { TopBar } from "@/components/app/TopBar";
 import { Surface } from "@/components/app/Surface";
 import { StatusChip } from "@/components/app/StatusChip";
-import { CUSTOMERS } from "@/lib/data";
+import { fetchCustomers } from '@/lib/apiClient';
+import { exportToCsv } from '@/lib/csv';
+import { saveView } from '@/lib/views';
 import { Filter, Download, ChevronDown, MoreHorizontal, Search } from "lucide-react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import useRealtime from '@/lib/useRealtime';
 
 export const Route = createFileRoute("/_app/customers/")({ component: CustomersPage });
 
@@ -12,24 +22,163 @@ const STATUS: Record<string, "success" | "warning" | "danger" | "neutral"> = {
 };
 
 function CustomersPage() {
+  const customers = useRealtime('customers', fetchCustomers, 'customers:update');
+  const [search, setSearch] = useState('');
+  const [page, setPage] = useState(1);
+  const [statusFilter, setStatusFilter] = useState('all');
+  const [planFilter, setPlanFilter] = useState('all');
+  const [communityFilter, setCommunityFilter] = useState('all');
+  const [vehicleFilter, setVehicleFilter] = useState('all');
+  const pageSize = 20;
+
+  const summary = useMemo(() => {
+    const now = new Date();
+    const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
+    const parsedCustomers = customers.map((customer) => ({
+      ...customer,
+      sinceDate: new Date(customer.since ?? customer.createdAt ?? ''),
+    }));
+    const active = parsedCustomers.filter((customer) => customer.status === 'active').length;
+    const churnRisk = parsedCustomers.filter((customer) => customer.status === 'churn-risk').length;
+    const newThisMonth = parsedCustomers.filter((customer) => customer.sinceDate && !Number.isNaN(customer.sinceDate.getTime()) && customer.sinceDate >= monthStart).length;
+    return { active, churnRisk, newThisMonth };
+  }, [customers]);
+
+  const filterOptions = useMemo(() => {
+    const plans = Array.from(new Set(customers.map((c) => c.plan).filter((value) => Boolean(value)))).sort();
+    const communities = Array.from(new Set(customers.map((c) => c.community).filter((value) => Boolean(value)))).sort();
+    return { plans, communities };
+  }, [customers]);
+
+  const filtered = useMemo(() => {
+    const q = search.toLowerCase().trim();
+    return customers.filter((c) => {
+      const matchesSearch = !q || (
+        (c.name || '').toLowerCase().includes(q) ||
+        (c.email || '').toLowerCase().includes(q) ||
+        (c.plate || '').toLowerCase().includes(q) ||
+        (c.community || '').toLowerCase().includes(q)
+      );
+      const matchesStatus = statusFilter === 'all' || (c.status || '').toLowerCase() === statusFilter;
+      const matchesPlan = planFilter === 'all' || (c.plan || '') === planFilter;
+      const matchesCommunity = communityFilter === 'all' || (c.community || '') === communityFilter;
+      const vehicleCount = Number(c.vehicles ?? 0);
+      const matchesVehicles = vehicleFilter === 'all'
+        || (vehicleFilter === '1' && vehicleCount === 1)
+        || (vehicleFilter === '2' && vehicleCount === 2)
+        || (vehicleFilter === '3' && vehicleCount === 3)
+        || (vehicleFilter === '4+' && vehicleCount >= 4);
+      return matchesSearch && matchesStatus && matchesPlan && matchesCommunity && matchesVehicles;
+    });
+  }, [customers, search, statusFilter, planFilter, communityFilter, vehicleFilter]);
+
+  const totalPages = Math.max(1, Math.ceil(filtered.length / pageSize));
+  const pageItems = useMemo(() => filtered.slice((page - 1) * pageSize, page * pageSize), [filtered, page]);
+
+  useEffect(() => {
+    setPage(1);
+  }, [search, statusFilter, planFilter, communityFilter, vehicleFilter]);
+
+  const filterLabel = (label: string, value: string, formatter?: (input: string) => string) => (
+    <>
+      {label} {value === 'all' ? 'All' : formatter ? formatter(value) : value} <ChevronDown className="h-3 w-3 text-muted-foreground" />
+    </>
+  );
+
+  const exportCsv = () => {
+    const rows = (filtered || []).map((c) => ({ id: c.id, name: c.name, email: c.email, community: c.community, plan: c.plan, status: c.status, ltv: c.ltv }));
+    if (!rows.length) return;
+    exportToCsv(`customers_export_${new Date().toISOString().slice(0,10)}.csv`, rows);
+  };
+
   return (
     <>
-      <TopBar title="Customers" subtitle="1,378 active · 142 new this month · 38 churn-risk" />
+      <TopBar title="Customers" subtitle={`${summary.active} active · ${summary.newThisMonth} new this month · ${summary.churnRisk} churn-risk`} />
       <div className="px-6 py-6 space-y-4">
         <Surface padded={false}>
           <div className="flex flex-wrap items-center gap-2 border-b border-border px-4 py-3">
-            <div className="flex items-center gap-2 rounded-xl border border-border bg-surface-muted px-2.5 py-1.5 text-[12.5px]">
+              <div className="flex items-center gap-2 rounded-xl border border-border bg-surface-muted px-2.5 py-1.5 text-[12.5px]">
               <Search className="h-3.5 w-3.5 text-muted-foreground" />
-              <input placeholder="Search name, email, plate…" className="w-64 bg-transparent outline-none" />
+              <input value={search} onChange={(e) => { setSearch(e.target.value); setPage(1); }} placeholder="Search name, email, plate…" className="w-64 bg-transparent outline-none" />
             </div>
-            {["All status","Plan","Community","Vehicles"].map((f) => (
-              <button key={f} className="inline-flex items-center gap-1 rounded-xl border border-border bg-surface px-3 py-1.5 text-[12px] font-bold text-foreground hover:bg-accent">
-                {f} <ChevronDown className="h-3 w-3 text-muted-foreground" />
-              </button>
-            ))}
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <button className="inline-flex items-center gap-1 rounded-xl border border-border bg-surface px-3 py-1.5 text-[12px] font-bold text-foreground hover:bg-accent">
+                  {filterLabel('Status', statusFilter, (v) => v.replace('-', ' '))}
+                </button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="start" className="w-44">
+                {['all', 'active', 'paused', 'churn-risk', 'cancelled'].map((value) => (
+                  <DropdownMenuItem key={value} onClick={() => setStatusFilter(value)}>
+                    {value === 'all' ? 'All status' : value.replace('-', ' ')}
+                  </DropdownMenuItem>
+                ))}
+              </DropdownMenuContent>
+            </DropdownMenu>
+
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <button className="inline-flex items-center gap-1 rounded-xl border border-border bg-surface px-3 py-1.5 text-[12px] font-bold text-foreground hover:bg-accent">
+                  {filterLabel('Plan', planFilter)}
+                </button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="start" className="w-56">
+                <DropdownMenuItem onClick={() => setPlanFilter('all')}>All plans</DropdownMenuItem>
+                {filterOptions.plans.map((plan) => (
+                  <DropdownMenuItem key={plan} onClick={() => setPlanFilter(plan)}>{plan}</DropdownMenuItem>
+                ))}
+              </DropdownMenuContent>
+            </DropdownMenu>
+
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <button className="inline-flex items-center gap-1 rounded-xl border border-border bg-surface px-3 py-1.5 text-[12px] font-bold text-foreground hover:bg-accent">
+                  {filterLabel('Community', communityFilter)}
+                </button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="start" className="w-64 max-h-72 overflow-y-auto">
+                <DropdownMenuItem onClick={() => setCommunityFilter('all')}>All communities</DropdownMenuItem>
+                {filterOptions.communities.map((community) => (
+                  <DropdownMenuItem key={community} onClick={() => setCommunityFilter(community)}>{community}</DropdownMenuItem>
+                ))}
+              </DropdownMenuContent>
+            </DropdownMenu>
+
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <button className="inline-flex items-center gap-1 rounded-xl border border-border bg-surface px-3 py-1.5 text-[12px] font-bold text-foreground hover:bg-accent">
+                  {filterLabel('Vehicles', vehicleFilter)}
+                </button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="start" className="w-44">
+                {[
+                  ['all', 'All vehicles'],
+                  ['1', '1 vehicle'],
+                  ['2', '2 vehicles'],
+                  ['3', '3 vehicles'],
+                  ['4+', '4+ vehicles'],
+                ].map(([value, label]) => (
+                  <DropdownMenuItem key={value} onClick={() => setVehicleFilter(value)}>{label}</DropdownMenuItem>
+                ))}
+              </DropdownMenuContent>
+            </DropdownMenu>
+
+            <button
+              onClick={() => {
+                setSearch('');
+                setStatusFilter('all');
+                setPlanFilter('all');
+                setCommunityFilter('all');
+                setVehicleFilter('all');
+                setPage(1);
+              }}
+              className="inline-flex items-center gap-1 rounded-xl border border-border bg-surface px-3 py-1.5 text-[12px] font-bold text-foreground hover:bg-accent"
+            >
+              Reset filters
+            </button>
             <div className="ml-auto flex items-center gap-2">
-              <button className="inline-flex items-center gap-1 rounded-xl border border-border bg-surface px-3 py-1.5 text-[12px] font-bold hover:bg-accent"><Filter className="h-3 w-3" /> Saved views</button>
-              <button className="inline-flex items-center gap-1 rounded-xl border border-border bg-surface px-3 py-1.5 text-[12px] font-bold hover:bg-accent"><Download className="h-3 w-3" /> Export</button>
+              <button onClick={() => saveView('customers_views', 'manual-save', { search, page })} className="inline-flex items-center gap-1 rounded-xl border border-border bg-surface px-3 py-1.5 text-[12px] font-bold hover:bg-accent"><Filter className="h-3 w-3" /> Saved views</button>
+              <button onClick={exportCsv} className="inline-flex items-center gap-1 rounded-xl border border-border bg-surface px-3 py-1.5 text-[12px] font-bold hover:bg-accent"><Download className="h-3 w-3" /> Export</button>
             </div>
           </div>
           <div className="overflow-x-auto">
@@ -47,7 +196,7 @@ function CustomersPage() {
                 </tr>
               </thead>
               <tbody>
-                {CUSTOMERS.map((c) => (
+                {pageItems.map((c) => (
                   <tr key={c.id} className="border-t border-border hover:bg-surface-muted/40">
                     <td className="px-4 py-3">
                       <Link to="/customers/$id" params={{ id: c.id }} className="group flex items-center gap-3">
@@ -73,13 +222,16 @@ function CustomersPage() {
             </table>
           </div>
           <div className="flex items-center justify-between border-t border-border px-4 py-3 text-[11.5px] text-muted-foreground">
-            <span>Showing 1–8 of 1,378 customers</span>
+            <span>Showing {filtered.length} customers</span>
             <div className="flex items-center gap-1">
-              <button className="rounded-md border border-border bg-surface px-2 py-1 hover:bg-accent">Prev</button>
-              <button className="rounded-md bg-primary px-2.5 py-1 font-bold text-primary-foreground">1</button>
-              <button className="rounded-md border border-border bg-surface px-2.5 py-1 hover:bg-accent">2</button>
-              <button className="rounded-md border border-border bg-surface px-2.5 py-1 hover:bg-accent">3</button>
-              <button className="rounded-md border border-border bg-surface px-2 py-1 hover:bg-accent">Next</button>
+              <button onClick={() => setPage((p) => Math.max(1, p - 1))} className="rounded-md border border-border bg-surface px-2 py-1 hover:bg-accent">Prev</button>
+              {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
+                const pageNum = Math.min(totalPages, Math.max(1, i + 1));
+                return (
+                  <button key={i} onClick={() => setPage(pageNum)} className={`rounded-md px-2.5 py-1 ${pageNum === page ? 'bg-primary font-bold text-primary-foreground' : 'border border-border bg-surface hover:bg-accent'}`}>{pageNum}</button>
+                );
+              })}
+              <button onClick={() => setPage((p) => Math.min(totalPages, p + 1))} className="rounded-md border border-border bg-surface px-2 py-1 hover:bg-accent">Next</button>
             </div>
           </div>
         </Surface>

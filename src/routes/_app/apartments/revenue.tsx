@@ -2,24 +2,37 @@ import { createFileRoute } from "@tanstack/react-router";
 import { TopBar } from "@/components/app/TopBar";
 import { Surface, SectionTitle } from "@/components/app/Surface";
 import { KpiCard } from "@/components/app/KpiCard";
-import { APARTMENTS } from "@/lib/data";
 import { Banknote, Building2, TrendingUp, ArrowUpRight } from "lucide-react";
 import { Bar, BarChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
+import { fetchInvoices } from "@/lib/apiClient";
+import useRealtime from "@/lib/useRealtime";
 
 export const Route = createFileRoute("/_app/apartments/revenue")({ component: Page });
 
 function Page() {
-  const total = APARTMENTS.reduce((s, a) => s + a.mrr, 0);
-  const data = APARTMENTS.map(a => ({ name: a.name.split(" ").slice(0,2).join(" "), mrr: a.mrr }));
+  const invoices = useRealtime('invoices', fetchInvoices, 'invoices:update');
+  const grouped = invoices.length
+    ? Object.values(invoices.reduce((acc: any, inv: any) => {
+        const key = inv.community ?? "Unknown";
+        acc[key] = acc[key] || { name: key, vehicles: 0, mrr: 0, residents: 0, staff: 0, occupancy: 0 };
+        acc[key].mrr += Number(inv.total ?? 0);
+        acc[key].vehicles += inv.plate ? 1 : 0;
+        return acc;
+      }, {} as Record<string, any>))
+    : [];
+
+  const total = grouped.reduce((s: number, a: any) => s + (a.mrr ?? 0), 0);
+  const data = (grouped as any[]).map((a) => ({ name: a.name.split(" ").slice(0,2).join(" "), mrr: Math.round((a.mrr ?? 0)) }));
+  const topCommunity = grouped[0];
   return (
     <>
       <TopBar title="Apartment Revenue" subtitle="MRR contribution by community · AED" />
       <div className="px-6 py-6 space-y-6">
         <div className="grid gap-4 md:grid-cols-4">
-          <KpiCard label="Total MRR" value={`AED ${total.toLocaleString()}`} delta={8.2} icon={Banknote} accent="primary" />
-          <KpiCard label="Top Community" value="Burj Vista 1" delta={11.4} icon={TrendingUp} accent="success" hint="AED 52,110/mo" />
-          <KpiCard label="Communities" value={String(APARTMENTS.length)} icon={Building2} accent="primary" hint="6 active billing" />
-          <KpiCard label="ARPU / community" value={`AED ${Math.round(total/APARTMENTS.length).toLocaleString()}`} delta={3.1} icon={Banknote} accent="success" />
+          <KpiCard label="Total MRR" value={`AED ${total.toLocaleString()}`} icon={Banknote} accent="primary" />
+          <KpiCard label="Top Community" value={topCommunity?.name ?? "—"} icon={TrendingUp} accent="success" hint={topCommunity ? `AED ${Number(topCommunity.mrr ?? 0).toLocaleString()}/mo` : "No live data"} />
+          <KpiCard label="Communities" value={String(grouped.length)} icon={Building2} accent="primary" hint="live billing communities" />
+          <KpiCard label="ARPU / community" value={`AED ${Math.round(total/Math.max(grouped.length,1)).toLocaleString()}`} icon={Banknote} accent="success" />
         </div>
         <Surface>
           <SectionTitle title="MRR by community" sub="Last 30 days" />
@@ -35,7 +48,7 @@ function Page() {
         </Surface>
         <Surface padded={false}>
           <div className="overflow-x-auto">
-            <table className="w-full text-[12.5px] min-w-[640px]">
+            <table className="w-full text-[12.5px] min-w-160">
               <thead className="bg-surface-muted text-[10.5px] font-bold uppercase tracking-wider text-muted-foreground">
                 <tr>
                   <th className="px-4 py-3 text-left">Community</th>
@@ -47,7 +60,7 @@ function Page() {
                 </tr>
               </thead>
               <tbody>
-                {APARTMENTS.map(a => (
+                {grouped.map(a => (
                   <tr key={a.name} className="border-t border-border hover:bg-surface-muted/60">
                     <td className="px-4 py-3 font-bold">{a.name}</td>
                     <td className="px-4 py-3 text-right tabular-nums">{a.vehicles}</td>

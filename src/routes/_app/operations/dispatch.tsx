@@ -2,7 +2,8 @@ import { createFileRoute } from "@tanstack/react-router";
 import { TopBar } from "@/components/app/TopBar";
 import { Surface, SectionTitle } from "@/components/app/Surface";
 import { StatusChip } from "@/components/app/StatusChip";
-import { DISPATCH_QUEUE, STAFF } from "@/lib/data";
+import { fetchTickets, fetchStaff } from "@/lib/apiClient";
+import useRealtime from "@/lib/useRealtime";
 import { GripVertical, MapPin, Search } from "lucide-react";
 
 export const Route = createFileRoute("/_app/operations/dispatch")({ component: Dispatch });
@@ -10,12 +11,17 @@ export const Route = createFileRoute("/_app/operations/dispatch")({ component: D
 const STAT: Record<string, "primary"|"info"|"warning"|"success"> = { "in-progress": "primary", "en-route": "info", queued: "warning", done: "success" };
 
 function Dispatch() {
+  const tickets = useRealtime('tickets', fetchTickets, 'tickets:update');
+  const staff = useRealtime('staff', fetchStaff, 'staff:update');
+
+  const queue = tickets.filter(t => t.status === 'queued' || t.status === 'pending');
+
   return (
     <>
-      <TopBar title="Dispatch Center" subtitle={`${DISPATCH_QUEUE.length} work orders in queue · drag to reassign`} />
+      <TopBar title="Dispatch Center" subtitle={`${queue.length} work orders in queue · drag to reassign`} />
       <div className="grid gap-4 px-6 py-6 xl:grid-cols-5">
-        <Surface className="xl:col-span-3 !p-0 overflow-hidden">
-          <div className="relative h-[600px] bg-gradient-to-br from-[oklch(0.97_0.015_220)] to-[oklch(0.95_0.025_258)]">
+        <Surface className="xl:col-span-3 p-0! overflow-hidden">
+          <div className="relative h-150 bg-linear-to-br from-[oklch(0.97_0.015_220)] to-[oklch(0.95_0.025_258)]">
             <svg className="absolute inset-0 h-full w-full opacity-50">
               <defs><pattern id="dg" width="48" height="48" patternUnits="userSpaceOnUse"><path d="M 48 0 L 0 0 0 48" fill="none" stroke="oklch(0.86 0.015 250)" strokeWidth="0.5"/></pattern></defs>
               <rect width="100%" height="100%" fill="url(#dg)" />
@@ -42,10 +48,10 @@ function Dispatch() {
         </Surface>
 
         <div className="xl:col-span-2 space-y-3">
-          <Surface className="!p-4">
+          <Surface className="p-4!">
             <SectionTitle title="Booking queue" sub="Today · sorted by slot" />
-            <div className="space-y-2 max-h-[260px] overflow-y-auto pr-1">
-              {DISPATCH_QUEUE.map((w) => (
+            <div className="space-y-2 max-h-65 overflow-y-auto pr-1">
+              {queue.map((w) => (
                 <div key={w.id} className="group flex items-center gap-2 rounded-xl border border-border bg-surface-muted/40 p-2.5 hover:border-primary/30 cursor-grab">
                   <GripVertical className="h-3.5 w-3.5 text-muted-foreground group-hover:text-foreground" />
                   <div className="flex-1 leading-tight">
@@ -57,10 +63,10 @@ function Dispatch() {
               ))}
             </div>
           </Surface>
-          <Surface className="!p-4">
+          <Surface className="p-4!">
             <SectionTitle title="Technician load" sub="Active capacity today" />
             <div className="space-y-2">
-              {STAFF.slice(0, 6).map((s) => {
+              {staff.slice(0, 6).map((s) => {
                 const load = s.status === "Cleaning" ? 92 : s.status === "En Route" ? 70 : s.status === "Available" ? 30 : s.status === "Break" ? 50 : 0;
                 return (
                   <div key={s.id} className="flex items-center gap-3 text-[12px]">

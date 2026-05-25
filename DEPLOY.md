@@ -1,3 +1,39 @@
+# Frontend deployment notes
+
+Prerequisites:
+- Node.js (or Bun) and package manager installed. The project uses Vite; the repo's Vercel config uses `bun`.
+- Ensure `VITE_API_URL` is set in your environment (see `.env.example`).
+
+Local build and preview:
+
+```bash
+# Install deps
+npm install
+# or with bun
+bun install
+
+# Build
+npm run build
+# or
+bun run build
+
+# Preview the production build
+npm run preview
+```
+
+Vercel:
+- The repository includes `vercel.json` configured to run `bun run build` and to serve `.output/public`.
+- In the Vercel project settings add an Environment Variable `VITE_API_URL` pointing to your API.
+- Push to a branch connected to Vercel; Vercel will run the configured build command.
+
+Cloudflare Workers (via Wrangler):
+- This repo includes `wrangler.jsonc` and a Cloudflare build plugin in `vite.config.ts`.
+- Build the project locally (`bun run build`), then run `wrangler publish` to deploy the worker.
+- Store any secrets or environment values with `wrangler secret put <NAME>` or via Cloudflare dashboard.
+
+Next steps / checks:
+- Run `npm run build` locally to verify the build completes.
+- Confirm the app reads `import.meta.env.VITE_API_URL` at runtime; set it in your hosting provider.
 # Deploying Progloss Super Admin
 
 ## Vercel (recommended)

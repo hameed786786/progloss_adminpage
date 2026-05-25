@@ -2,8 +2,9 @@ import { createFileRoute } from "@tanstack/react-router";
 import { TopBar } from "@/components/app/TopBar";
 import { Surface, SectionTitle } from "@/components/app/Surface";
 import { StatusChip } from "@/components/app/StatusChip";
-import { TICKETS } from "@/lib/data";
 import { AlertTriangle, Clock, Paperclip, MessageSquare, User } from "lucide-react";
+import { fetchTickets } from "@/lib/apiClient";
+import useRealtime from "@/lib/useRealtime";
 
 export const Route = createFileRoute("/_app/customers/tickets")({ component: Tickets });
 
@@ -11,15 +12,16 @@ const PRIO: Record<string, "danger"|"warning"|"info"|"neutral"> = { urgent: "dan
 const STAT: Record<string, "danger"|"warning"|"primary"|"success"> = { escalated: "danger", open: "warning", "in-progress": "primary", resolved: "success" };
 
 function Tickets() {
+  const rows = useRealtime('tickets', fetchTickets, 'tickets:update');
   const counts = {
-    open: TICKETS.filter(t => t.status === "open").length,
-    progress: TICKETS.filter(t => t.status === "in-progress").length,
-    escalated: TICKETS.filter(t => t.status === "escalated").length,
-    resolved: TICKETS.filter(t => t.status === "resolved").length,
+    open: rows.filter((ticket) => ticket.status === "open").length,
+    progress: rows.filter((ticket) => ticket.status === "in-progress").length,
+    escalated: rows.filter((ticket) => ticket.status === "escalated").length,
+    resolved: rows.filter((ticket) => ticket.status === "resolved").length,
   };
   return (
     <>
-      <TopBar title="Ticketing Center" subtitle="Support queue · SLA monitoring · 6 active tickets" />
+      <TopBar title="Ticketing Center" subtitle={`Support queue · SLA monitoring · ${rows.length} active tickets`} />
       <div className="px-6 py-6 space-y-4">
         <div className="grid gap-3 md:grid-cols-4">
           {[
@@ -28,7 +30,7 @@ function Tickets() {
             { label: "Escalated", count: counts.escalated, tone: "danger" as const },
             { label: "Resolved · 7d", count: 41, tone: "success" as const },
           ].map((s) => (
-            <Surface key={s.label} className="!py-4">
+            <Surface key={s.label} className="py-4!">
               <div className="flex items-center justify-between">
                 <span className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground">{s.label}</span>
                 <StatusChip tone={s.tone}>{s.tone === "danger" ? "Action" : "Live"}</StatusChip>
@@ -53,20 +55,20 @@ function Tickets() {
                 <tr><th className="px-4 py-2.5 text-left">Ticket</th><th className="px-4 py-2.5 text-left">Priority</th><th className="px-4 py-2.5 text-left">Status</th><th className="px-4 py-2.5 text-left">SLA</th><th className="px-4 py-2.5 text-left">Assigned</th></tr>
               </thead>
               <tbody>
-                {TICKETS.map((t) => (
+                {rows.map((t) => (
                   <tr key={t.id} className="border-t border-border hover:bg-surface-muted/40 cursor-pointer">
                     <td className="px-4 py-3">
                       <div className="font-bold text-foreground">{t.subject}</div>
-                      <div className="text-[11px] text-muted-foreground">{t.id} · {t.customer} · {t.created}</div>
+                      <div className="text-[11px] text-muted-foreground">{t.id} · {t.customer} · {t.created ?? "—"}</div>
                     </td>
-                    <td className="px-4 py-3"><StatusChip tone={PRIO[t.priority]}>{t.priority}</StatusChip></td>
-                    <td className="px-4 py-3"><StatusChip tone={STAT[t.status]}>{t.status}</StatusChip></td>
+                    <td className="px-4 py-3"><StatusChip tone={PRIO[t.priority ?? "medium"]}>{t.priority ?? "medium"}</StatusChip></td>
+                    <td className="px-4 py-3"><StatusChip tone={STAT[t.status] ?? "warning"}>{t.status ?? "open"}</StatusChip></td>
                     <td className="px-4 py-3">
-                      <div className={`inline-flex items-center gap-1 text-[11.5px] font-bold ${t.sla === "Breached" ? "text-destructive" : "text-foreground"}`}>
-                        <Clock className="h-3 w-3" /> {t.sla}
+                      <div className={`inline-flex items-center gap-1 text-[11.5px] font-bold ${(t.sla ?? "—") === "Breached" ? "text-destructive" : "text-foreground"}`}>
+                        <Clock className="h-3 w-3" /> {t.sla ?? "—"}
                       </div>
                     </td>
-                    <td className="px-4 py-3 text-muted-foreground">{t.assigned}</td>
+                    <td className="px-4 py-3 text-muted-foreground">{t.assigned ?? "Unassigned"}</td>
                   </tr>
                 ))}
               </tbody>
@@ -83,7 +85,7 @@ function Tickets() {
                 <div className="mt-2 flex items-center gap-1 text-[11px] text-muted-foreground"><Paperclip className="h-3 w-3" /> 2 attachments · photo evidence</div>
               </div>
               <div className="rounded-xl border border-warning/30 bg-warning/5 p-3 text-[12px]">
-                <div className="flex items-center gap-1.5 font-bold text-[color:oklch(0.45_0.13_60)]"><AlertTriangle className="h-3.5 w-3.5" /> Internal note · Layla Hassan</div>
+                <div className="flex items-center gap-1.5 font-bold text-[oklch(0.45_0.13_60)]"><AlertTriangle className="h-3.5 w-3.5" /> Internal note · Layla Hassan</div>
                 <p className="mt-1.5 text-foreground/80">Confirmed via dispatch logs. Reassigning PRG-T-018 for re-wash today 16:00. Compensation: 1 free wash credit.</p>
               </div>
               <div className="flex gap-2 pt-1">

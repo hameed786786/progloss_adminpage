@@ -2,7 +2,8 @@ import { createFileRoute } from "@tanstack/react-router";
 import { TopBar } from "@/components/app/TopBar";
 import { Surface, SectionTitle } from "@/components/app/Surface";
 import { StatusChip } from "@/components/app/StatusChip";
-import { STAFF } from "@/lib/data";
+import { fetchStaff } from "@/lib/apiClient";
+import useRealtime from "@/lib/useRealtime";
 import { MapPin, Radio, Coffee, Wrench, Circle } from "lucide-react";
 
 export const Route = createFileRoute("/_app/operations/tracking")({ component: Tracking });
@@ -12,12 +13,14 @@ const STATUS_TONE: Record<string, "success"|"warning"|"primary"|"info"|"neutral"
 };
 
 function Tracking() {
+  const staff = useRealtime('staff', fetchStaff, 'staff:update');
+
   return (
     <>
-      <TopBar title="Staff Live Tracking" subtitle={`${STAFF.filter(s=>s.status!=="Offline").length} technicians online · Dubai operational zones`} />
+      <TopBar title="Staff Live Tracking" subtitle={`${staff.filter(s=>s.status!=="Offline").length} technicians online · Dubai operational zones`} />
       <div className="grid gap-4 px-6 py-6 xl:grid-cols-5">
-        <Surface className="xl:col-span-3 !p-0 overflow-hidden">
-          <div className="relative h-[560px] bg-gradient-to-br from-[oklch(0.96_0.02_220)] via-[oklch(0.97_0.015_250)] to-[oklch(0.95_0.03_258)]">
+        <Surface className="xl:col-span-3 p-0! overflow-hidden">
+          <div className="relative h-140 bg-linear-to-br from-[oklch(0.96_0.02_220)] via-[oklch(0.97_0.015_250)] to-[oklch(0.95_0.03_258)]">
             <svg className="absolute inset-0 h-full w-full opacity-40" xmlns="http://www.w3.org/2000/svg">
               <defs>
                 <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
@@ -62,16 +65,16 @@ function Tracking() {
         </Surface>
 
         <div className="xl:col-span-2 space-y-3">
-          <Surface className="!py-3">
+          <Surface className="py-3!">
             <div className="flex items-center gap-1 rounded-lg border border-border bg-surface-muted p-0.5 text-[11.5px] font-bold">
               {["All","Cleaning","En Route","Available","Break"].map((t,i) => (
                 <button key={t} className={`flex-1 rounded-md px-2 py-1 ${i===0 ? "bg-surface text-foreground shadow-card" : "text-muted-foreground"}`}>{t}</button>
               ))}
             </div>
           </Surface>
-          <div className="space-y-3 max-h-[480px] overflow-y-auto pr-1">
-            {STAFF.map((s) => (
-              <Surface key={s.id} className="!p-4">
+          <div className="space-y-3 max-h-120 overflow-y-auto pr-1">
+            {staff.map((s) => (
+              <Surface key={s.id} className="p-4!">
                 <div className="flex items-start justify-between gap-3">
                   <div className="flex items-center gap-3">
                     <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10 text-[11px] font-black text-primary">
