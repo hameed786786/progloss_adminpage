@@ -22,9 +22,17 @@ npm run preview
 ```
 
 Vercel:
-- The repository includes `vercel.json` configured to run `bun run build` and to serve `.output/public`.
-- In the Vercel project settings add an Environment Variable `VITE_API_URL` pointing to your API.
+- The repository includes `vercel.json` configured to run `bun run build` and to serve `dist/client`.
+- In the Vercel project settings add `VITE_API_URL=https://progloss-adminpage-xg48.onrender.com`.
 - Push to a branch connected to Vercel; Vercel will run the configured build command.
+
+Frontend deployment checklist:
+
+1. Import the repo into Vercel.
+2. Use the repository root as the project root.
+3. Set `VITE_API_URL=https://progloss-adminpage-xg48.onrender.com`.
+4. Deploy and then open the generated frontend URL.
+5. If auth or API calls fail, confirm the backend Render URL is still active and the CORS origin is allowed.
 
 Cloudflare Workers (via Wrangler):
 - This repo includes `wrangler.jsonc` and a Cloudflare build plugin in `vite.config.ts`.
@@ -45,7 +53,7 @@ A `vercel.json` is included.
 3. Framework Preset: **Other**. Build is already pinned in `vercel.json`:
    - Install: `bun install`
    - Build: `bun run build`
-   - Output: `.output/public`
+   - Output: `dist/client`
 4. Deploy. SPA fallback is configured via `rewrites`, so deep links and
    page refreshes (e.g. `/billing/invoices/INV-2026-04812`) work.
 
